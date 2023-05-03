@@ -1,0 +1,11 @@
+IP = PWM
+COM12 Open success
+b''
+StarFive # not found
+PWM_001_SET_CONFIG -10 Err: Uboot is not ready for receiving command
+b''
+StarFive # not found
+PWM_002_DUTY_NS_ERR -10 Err: Uboot is not ready for receiving command
+b''
+StarFive # not found
+PWM_003_DISABLE -10 Err: Uboot is not ready for receiving command

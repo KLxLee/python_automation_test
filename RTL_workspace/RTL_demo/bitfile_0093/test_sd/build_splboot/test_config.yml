@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=test_config.json
+
+uboot_test1:
+  fpga:
+    power_1_8V: "On"
+    power_3_3V: "On"
+    power_5_0V: "On"
+    S2CCLK_1: 24
+    S2CCLK_2: 50
+    S2CCLK_3: 40
+    S2CCLK_4: 12.288
+    S2CCLK_5: 48
+    S2CCLK_6: 48
+    S2CCLK_7: 100
+    S2CCLK_8: 48
+    bitfile_fpga1: "null"
+    bitfile_fpga2: "C:/Users/MDC_FPGA_3/OneDrive - StarFive Technology International/General/Images/JH8100/0093-JH8100_V1_0_2_CFG2_7_DEC29_DUBHE_SD_PRESYN/bit/JH8100_V1_0_2_CFG2_7_DEC29_DUBHE_SD_PRESYN_rtl190e08178_fpgaa810b96_P1_UV19P_2301040010.bit"

@@ -1,0 +1,4 @@
+bitfile_0068
+IP = I2C
+I2C_001_SPEED 0 Pass: Success to set speed of I2C until 400000Hz
+I2C_002_RW 0 Pass: Success to read write data to EEPROM

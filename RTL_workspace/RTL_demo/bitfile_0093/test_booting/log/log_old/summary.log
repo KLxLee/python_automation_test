@@ -1,0 +1,3 @@
+IP = BOOTING
+BOOTING_001_INFO 0 Pass: Success to read U-boot info
+BOOTING_002_MEMORY 0 Pass: Success to read write memory

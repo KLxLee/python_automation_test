@@ -1,0 +1,12 @@
+bitfile_0063
+IP = EMMC
+EMMC_001_SCAN_DEV -10 Err: Uboot is not ready for receiving command
+EMMC_002_RW_ALL_MODE 0 Pass: Read Write data to eMMC with all speed mode success
+EMMC_003_LOAD_FAT_UBOOT_IMG -10 Err: Uboot is not ready for receiving command
+EMMC_004_SPLBOOT -25 Err: SPL Boot source type is not MMC
+IP = XSPI
+XSPI_001_PROTECT_BASIC_TEST -10 Err: Uboot is not ready for receiving command
+XSPI_002_ERASE_READ_WRITE 0 Pass: 
+XSPI_003_CROSS_BOUNDARY -19 Err: Memory read at 0x44000000 is different with memory write at 0xa0000000
+XSPI_004_LOAD_UBOOT_IMG -10 Err: Uboot is not ready for receiving command
+XSPI_005_SPLBOOT 0 Pass: SPL BOOT from SPI success

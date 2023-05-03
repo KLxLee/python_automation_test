@@ -1,0 +1,6 @@
+bitfile_0063
+IP = EMMC
+EMMC_001_SCAN_DEV 0 Pass: eMMC device found
+EMMC_002_RW_ALL_MODE -14 Err: speed mode set to HS400 (200MHz) is failed
+EMMC_003_LOAD_FAT_UBOOT_IMG 0 Pass: 
+EMMC_004_SPLBOOT 0 Pass: SPL BOOT from MMC success

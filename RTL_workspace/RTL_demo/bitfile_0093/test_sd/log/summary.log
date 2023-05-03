@@ -1,0 +1,5 @@
+IP = SD
+SD_001_SCAN_DEV 0 Pass: SD device found
+SD_002_RW_ALL_MODE 0 Pass: Read Write data to SD card with all speed mode success
+SD_003_LOAD_FAT_UBOOT_IMG 0 Pass: 
+SD_004_SPLBOOT 0 Pass: SPL BOOT from MMC success

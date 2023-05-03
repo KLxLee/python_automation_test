@@ -1,0 +1,2 @@
+IP = Ethernet
+ETH_001_TFTP_BOOT_LINUX -31 Err: Failed to start Linux

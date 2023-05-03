@@ -1,0 +1,4 @@
+IP = TIMER
+TIMER_001_RISCV 0 Pass: RISCV timer of CPU run accurate within tolerance, 0.1 in period 5
+TIMER_002_SIFIVE_REG -15 Err: Timer failed at unit 0 with base address, 15200000
+TIMER_003_SIFIVE -13 Err: SiFive timer too fast

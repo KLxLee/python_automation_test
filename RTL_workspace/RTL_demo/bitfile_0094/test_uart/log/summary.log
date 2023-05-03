@@ -1,0 +1,2 @@
+IP = UART
+UART_001_BOOT_U_BOOT_PROPER 0 Pass: Uboot SPL boot to Uboot.itb success

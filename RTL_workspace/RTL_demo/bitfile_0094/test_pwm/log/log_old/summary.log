@@ -1,0 +1,4 @@
+IP = PWM
+PWM_001_SET_CONFIG -10 Err: Uboot is not ready for receiving command
+PWM_002_DUTY_NS_ERR -10 Err: Uboot is not ready for receiving command
+PWM_003_DISABLE -10 Err: Uboot is not ready for receiving command

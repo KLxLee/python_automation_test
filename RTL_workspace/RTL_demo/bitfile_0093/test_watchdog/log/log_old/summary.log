@@ -1,0 +1,4 @@
+IP = WATCHDOG
+WDT_001_PROBE 0 Pass: Success to probe Watchdog
+WDT_002_START_STOP_RESET -18 Err: failed to run Watchdog
+WDT_003_TRIGGER -20 Err: failed to trigger Watchdog

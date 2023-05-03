@@ -1,0 +1,7 @@
+bitfile_0068
+IP = GPIO
+GPIO_001_STATUS 0 Pass: Success to get gpio status
+GPIO_002_LPBK_TEST -15 Err: Simple loopback test at GPIO23 as output(value=1) and GPIO24 as input
+IP = I2C
+I2C_001_SPEED -10 Err: Uboot is not ready for receiving command
+I2C_002_RW -10 Err: Uboot is not ready for receiving command

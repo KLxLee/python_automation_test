@@ -1,0 +1,74 @@
+IP = XSPI
+COM4 Open success
+b'\r\n'
+b'StarFive # '
+StarFive # found
+b'sf probe 1:0\r\n'
+b'SF: Detected gd25lq256d with page size 256 Bytes, erase size 4 KiB, total 32 MiB\r\n'
+SF: Detected  found
+b'sf test 0x0 0x2000\r\n'
+b'SPI flash test:\r\n'
+b'0 erase: 154 ticks, 51 KiB/s 0.408 Mbps\r\n'
+b'1 check: 54 ticks, 148 KiB/s 1.184 Mbps\r\n'
+b'2 write: 52 ticks, 153 KiB/s 1.224 Mbps\r\n'
+b'3 read: 51 ticks, 156 KiB/s 1.248 Mbps\r\n'
+b'Test passed\r\n'
+Test passed found
+b'sf erase  0x0 +0x2000\r\n'
+b'ERROR: flash area is locked\r\n'
+Erased: OK|ERROR: flash area is locked found
+b'sf erase  0x0 +0x2000\r\n'
+b'SF: 8192 bytes @ 0x0 Erased: OK\r\n'
+Erased: OK|ERROR: flash area is locked found
+XSPI_001_PROTECT_BASIC_TEST 0 Pass: 
+b'\r\n'
+b'SF: 8192 bytes @ 0x0 Erased: OK\r\n'
+b'StarFive # '
+StarFive # found
+b'sf probe 1:0\r\n'
+b'SF: Detected gd25lq256d with page size 256 Bytes, erase size 4 KiB, total 32 MiB\r\n'
+SF: Detected  found
+b'sf erase  0x0 +0x2000\r\n'
+b'SF: 8192 bytes @ 0x0 Erased: OK\r\n'
+Erased: OK|ERROR: flash area is locked found
+b'sf read 0x44000000 0x0 0x2000\r\n'
+b'device 0 offset 0x0, size 0x2000\r\n'
+b'SF: 8192 bytes @ 0x0 Read: OK\r\n'
+Read: OK found
+b'crc32 0x44000000 0x2000\r\n'
+b'crc32 for 44000000 ... 44001fff ==> b4293435\r\n'
+==> ........ found
+b'sf write 0xa0000000 0x0 0x2000\r\n'
+b'device 0 offset 0x0, size 0x2000\r\n'
+b'SF: 8192 bytes @ 0x0 Written: OK\r\n'
+Written: OK found
+b'sf read 0x44000000 0x0 0x2000\r\n'
+b'device 0 offset 0x0, size 0x2000\r\n'
+b'SF: 8192 bytes @ 0x0 Read: OK\r\n'
+Read: OK found
+b'cmp.b 0x44000000 0xa0000000 0x2000\r\n'
+b'Total of 8192 byte(s) were the same\r\n'
+Total of 8192 byte found
+XSPI_002_ERASE_READ_WRITE 0 Pass: 
+b'\r\n'
+b'Total of 8192 byte(s) were the same\r\n'
+b'StarFive # '
+StarFive # found
+b'sf probe 1:0\r\n'
+b'SF: Detected gd25lq256d with page size 256 Bytes, erase size 4 KiB, total 32 MiB\r\n'
+SF: Detected  found
+b'sf write 0xa0000000 0xfff000 0x2000\r\n'
+b'device 0 offset 0xfff000, size 0x2000\r\n'
+b'SF: 8192 bytes @ 0xfff000 Written: OK\r\n'
+Written: OK found
+b'sf read 0x44000000 0xfff000 0x2000\r\n'
+b'device 0 offset 0xfff000, size 0x2000\r\n'
+b'SF: 8192 bytes @ 0xfff000 Read: OK\r\n'
+Read: OK found
+b'cmp.b 0x44000000 0xa0000000 0x2000\r\n'
+b'byte at 0x44001000 (0xd0) != byte at 0xa0001000 (0xe2)\r\n'
+b'Total of 4096 byte(s) were the same\r\n'
+b'StarFive # '
+b''
+Total of 8192 byte not found
+XSPI_003_CROSS_BOUNDARY -19 Err: Memory read at 0x44000000 is different with memory write at 0xa0000000

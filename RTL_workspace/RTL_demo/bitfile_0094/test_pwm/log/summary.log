@@ -1,0 +1,4 @@
+IP = PWM
+PWM_001_SET_CONFIG -18 Err: Config PWM to ratio(0.2) is different with PWM ratio(0.0) which read by GPIO with tolerance(0.015)
+PWM_002_DUTY_NS_ERR 0 Pass: Alert message showed after setting invalid PWM duty period
+PWM_003_DISABLE 0 Pass: Disable PWM success

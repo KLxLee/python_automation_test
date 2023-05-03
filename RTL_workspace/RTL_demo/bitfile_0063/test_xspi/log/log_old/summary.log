@@ -1,0 +1,4 @@
+IP = XSPI
+XSPI_001_PROTECT_BASIC_TEST 0 Pass: 
+XSPI_002_ERASE_READ_WRITE 0 Pass: 
+XSPI_003_CROSS_BOUNDARY -19 Err: Memory read at 0x44000000 is different with memory write at 0xa0000000

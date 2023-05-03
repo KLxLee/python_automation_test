@@ -1,0 +1,17 @@
+bitfile_0093
+IP = BOOTING
+BOOTING_001_INFO 0 Pass: Success to read U-boot info
+BOOTING_002_MEMORY 0 Pass: Success to read write memory
+IP = SD
+SD_001_SCAN_DEV 0 Pass: SD device found
+SD_002_RW_ALL_MODE 0 Pass: Read Write data to SD card with all speed mode success
+SD_003_LOAD_FAT_UBOOT_IMG 0 Pass: 
+SD_004_SPLBOOT 0 Pass: SPL BOOT from MMC success
+IP = TIMER
+TIMER_001_RISCV 0 Pass: RISCV timer of CPU run accurate within tolerance, 0.1 in period 5
+TIMER_002_SIFIVE_REG -15 Err: Timer failed at unit 3 with base address, 15210000
+TIMER_003_SIFIVE -13 Err: SiFive timer too fast
+IP = WATCHDOG
+WDT_001_PROBE 0 Pass: Success to probe Watchdog
+WDT_002_START_STOP_RESET -18 Err: failed to run Watchdog
+WDT_003_TRIGGER -20 Err: failed to trigger Watchdog

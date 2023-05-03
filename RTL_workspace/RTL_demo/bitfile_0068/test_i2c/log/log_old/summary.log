@@ -1,0 +1,3 @@
+IP = I2C
+I2C_001_SPEED -10 Err: Uboot is not ready for receiving command
+I2C_002_RW -10 Err: Uboot is not ready for receiving command

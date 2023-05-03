@@ -1,0 +1,5 @@
+IP = EMMC
+EMMC_001_SCAN_DEV -10 Err: Uboot is not ready for receiving command
+EMMC_002_RW_ALL_MODE 0 Pass: Read Write data to eMMC with all speed mode success
+EMMC_003_LOAD_FAT_UBOOT_IMG -10 Err: Uboot is not ready for receiving command
+EMMC_004_SPLBOOT -25 Err: SPL Boot source type is not MMC

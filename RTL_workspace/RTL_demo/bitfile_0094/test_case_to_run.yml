@@ -1,0 +1,5 @@
+test_case:
+    - test_ethernet
+    - test_gpio
+    - test_pwm
+    - test_uart

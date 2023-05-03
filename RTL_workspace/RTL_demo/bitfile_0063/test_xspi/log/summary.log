@@ -1,0 +1,6 @@
+IP = XSPI
+XSPI_001_PROTECT_BASIC_TEST -10 Err: Uboot is not ready for receiving command
+XSPI_002_ERASE_READ_WRITE 0 Pass: 
+XSPI_003_CROSS_BOUNDARY -19 Err: Memory read at 0x44000000 is different with memory write at 0xa0000000
+XSPI_004_LOAD_UBOOT_IMG -10 Err: Uboot is not ready for receiving command
+XSPI_005_SPLBOOT 0 Pass: SPL BOOT from SPI success

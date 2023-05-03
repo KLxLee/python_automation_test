@@ -1,0 +1,46 @@
+RTL_demo
+bitfile_0063
+IP = EMMC
+EMMC_001_SCAN_DEV -10 Err: Uboot is not ready for receiving command
+EMMC_002_RW_ALL_MODE 0 Pass: Read Write data to eMMC with all speed mode success
+EMMC_003_LOAD_FAT_UBOOT_IMG -10 Err: Uboot is not ready for receiving command
+EMMC_004_SPLBOOT -25 Err: SPL Boot source type is not MMC
+IP = XSPI
+XSPI_001_PROTECT_BASIC_TEST -10 Err: Uboot is not ready for receiving command
+XSPI_002_ERASE_READ_WRITE 0 Pass: 
+XSPI_003_CROSS_BOUNDARY -19 Err: Memory read at 0x44000000 is different with memory write at 0xa0000000
+XSPI_004_LOAD_UBOOT_IMG -10 Err: Uboot is not ready for receiving command
+XSPI_005_SPLBOOT 0 Pass: SPL BOOT from SPI success
+bitfile_0068
+IP = I2C
+I2C_001_SPEED 0 Pass: Success to set speed of I2C until 400000Hz
+I2C_002_RW 0 Pass: Success to read write data to EEPROM
+bitfile_0093
+IP = BOOTING
+BOOTING_001_INFO 0 Pass: Success to read U-boot info
+BOOTING_002_MEMORY 0 Pass: Success to read write memory
+IP = SD
+SD_001_SCAN_DEV 0 Pass: SD device found
+SD_002_RW_ALL_MODE 0 Pass: Read Write data to SD card with all speed mode success
+SD_003_LOAD_FAT_UBOOT_IMG 0 Pass: 
+SD_004_SPLBOOT 0 Pass: SPL BOOT from MMC success
+IP = TIMER
+TIMER_001_RISCV 0 Pass: RISCV timer of CPU run accurate within tolerance, 0.1 in period 5
+TIMER_002_SIFIVE_REG -15 Err: Timer failed at unit 0 with base address, 15200000
+TIMER_003_SIFIVE -13 Err: SiFive timer too fast
+IP = WATCHDOG
+WDT_001_PROBE 0 Pass: Success to probe Watchdog
+WDT_002_START_STOP_RESET -18 Err: failed to run Watchdog
+WDT_003_TRIGGER -20 Err: failed to trigger Watchdog
+bitfile_0094
+IP = Ethernet
+ETH_001_TFTP_BOOT_LINUX -31 Err: Failed to start Linux
+IP = GPIO
+GPIO_001_STATUS 0 Pass: Success to get gpio status
+GPIO_002_LPBK_TEST 0 Pass: Success to do loopback gpio test with GPIO pin 23 and 24
+IP = PWM
+PWM_001_SET_CONFIG -18 Err: Config PWM to ratio(0.2) is different with PWM ratio(0.0) which read by GPIO with tolerance(0.015)
+PWM_002_DUTY_NS_ERR 0 Pass: Alert message showed after setting invalid PWM duty period
+PWM_003_DISABLE 0 Pass: Disable PWM success
+IP = UART
+UART_001_BOOT_U_BOOT_PROPER 0 Pass: Uboot SPL boot to Uboot.itb success

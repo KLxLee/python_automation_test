@@ -1,0 +1,4 @@
+IP = BOOTING
+BOOTING_001_INFO -10 Err: Uboot is not ready for receiving command
+BOOTING_002_MEMORY -10 Err: Uboot is not ready for receiving command
+IP = BOOTING

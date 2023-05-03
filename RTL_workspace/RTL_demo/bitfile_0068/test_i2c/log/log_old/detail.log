@@ -1,0 +1,8 @@
+IP = I2C
+COM12 Open success
+b''
+StarFive # not found
+I2C_001_SPEED -10 Err: Uboot is not ready for receiving command
+b''
+StarFive # not found
+I2C_002_RW -10 Err: Uboot is not ready for receiving command

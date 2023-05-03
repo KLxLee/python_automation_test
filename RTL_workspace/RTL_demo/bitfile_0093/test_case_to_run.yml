@@ -1,0 +1,5 @@
+test_case:
+    - test_booting
+    - test_sd
+    - test_timer
+    - test_watchdog
