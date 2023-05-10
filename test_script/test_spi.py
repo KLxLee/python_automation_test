@@ -3,13 +3,24 @@ import time
 import serial
 import re
 import random
+from os import path
+import std_func as sf
 
 ###################################### Define ######################################
-spi_dev = "0"
+spi_dev = ["0", "1"]
 chip_sel = ["0", "1"]
 spi_mode = ["0", "1", "2", "3"]
 bit_len = "16"
 device_id_addr = "8000"
+
+GPIO_PIN_MOSI = 23
+GPIO_PIN_MISO = 24
+pinctrl_IP_base = 0x150d0000
+pinctrl_doen_base = 0x00
+pinctrl_dout_base = 0x40
+spi_mo_dout_id = 95
+spi_mo_doen_id = 43
+gpi_spi_mi_addr = 0x150d00b8
 ####################################################################################
 
 ################################### Error Code #####################################
@@ -17,30 +28,34 @@ Err_CMD_startup = -10
 Err_loopback = -11
 Err_read_device_id = -12
 Err_read_and_write = -13
+Err_read_register = -14
+Err_write_register = -15
 ####################################################################################
 
 ########################################## Variable ################################
-SPI_001_LOOPBACK_result = -8
-SPI_003_RWR_result = -3
+SPI_001_LOOPBACK_result = 0
+SPI_002_RWR_result = 0
 
-s = "COMPORT"
+s = None
+sl = None
+res_msg = ""
 ####################################################################################
 
-def open_COMPORT():
+def open_COMPORT(COM_PORT = 'COM4'):
     global s
+    global sl
 
-    COM_PORT = 'COM1'
     s = serial.Serial(COM_PORT)
     if not s.isOpen():
-        print("COM port Fail to open")
+        sl.log(COM_PORT + " port fail to open", 'INFO')
         exit()
-    print("Open success")
+    sl.log(COM_PORT + " open success", 'INFO')
     s.baudrate = 115200
     s.parity=serial.PARITY_NONE
     s.stopbits=serial.STOPBITS_TWO
     s.bytesize=serial.EIGHTBITS
     s.flush()
-    s.write_timeout = 3
+    s.write_timeout = 10
     s.timeout = 10
 
 def close_COMPORT():
@@ -58,6 +73,7 @@ def send_command(com_string):
 
 def scan_expected_resp(cmd_send, reps_string, timeout_period):
     global s
+    global sl
 
     s.reset_input_buffer()
     s.timeout = timeout_period
@@ -66,157 +82,261 @@ def scan_expected_resp(cmd_send, reps_string, timeout_period):
 
     while True:
         line = s.readline()
-        print(line)
-        if len(line) == 0:
-            print(reps_string + " not found.\n")
+        sl.log(line, 'DEBUG')
+        if line == None:
+            sl.log(reps_string + " not found.\n", 'INFO')
             return
 
         match = re.search(reps_string, line.decode('utf-8')) #line.decode('utf-8')
 
         if match:
-            print(reps_string + " found\n")
+            sl.log(reps_string + " found\n", 'INFO')
             return line.decode('utf-8')
 
 def detect_CMD_startup():
+    global res_msg
     time_wait = 10
 
-    if scan_expected_resp("","StarFive #", time_wait): 
-        print("Booting done \n")
+    if scan_expected_resp(" ","StarFive #", time_wait): 
         return 0
     else:
-        print("Booting failed \n")
+        res_msg = "Err: Uboot is not ready for receiving command"
         return Err_CMD_startup
 
-def summarize_test_id():
-    global SPI_001_LOOPBACK_result
-    global SPI_003_RWR_result
+def set_spi_pinctrl(mosi_pin, miso_pin):
+    ret = set_pinctrl_en_out(mosi_pin, pinctrl_dout_base, spi_mo_dout_id)
+    if isinstance(ret, (int)):
+        if ret < 0:
+            return ret 
 
-    if SPI_001_LOOPBACK_result != 0:
-        print("SPI_001_LOOPBACK failed\n")
+    ret = set_pinctrl_en_out(mosi_pin, pinctrl_doen_base, spi_mo_doen_id)
+    if isinstance(ret, (int)):
+        if ret < 0:
+            return ret
+        
+    ret = set_pinctrl_en_out(miso_pin, pinctrl_doen_base, 1)
+    if isinstance(ret, (int)):
+        if ret < 0:
+            return ret
+
+    ret = set_pinctrl_en_in(gpi_spi_mi_addr, miso_pin+2)
+    if isinstance(ret, (int)):
+        if ret < 0:
+            return ret
+            
+    ret = set_pinctrl_en_out(miso_pin, pinctrl_dout_base, 0)
+    if isinstance(ret, (int)):
+        if ret < 0:
+            return ret
+
+    return 0
+
+def from_hex(hexdigits):
+    return int(hexdigits, 16)
+
+def set_pinctrl_en_out(pin, func_offset, val):
+    pin_reg_addr = pinctrl_IP_base + func_offset + (pin & 0xfffffffc)
+    pin_reg_addr = hex(pin_reg_addr)
+    pin_reg_off = pin & (0x03)
+
+    tmp = read_register(pin_reg_addr)
+    if isinstance(tmp, (int)):
+        return tmp
+
+    shift = 8 * pin_reg_off
+    mask = 0xff << shift
+    tmp = from_hex(tmp) & ~mask
+    tmp |= (val << shift) & mask
+    val = hex(tmp)
+
+    return write_register(pin_reg_addr, val[2:])
+
+def set_pinctrl_en_in(pin_reg_addr, val):
+    pin_reg_addr = hex(pin_reg_addr)
+
+    tmp = read_register(pin_reg_addr)
+    if isinstance(tmp, (int)):
+        return tmp
+    
+    tmp = str(tmp)
+    val = str(hex(val))
+    tmp = tmp.replace(tmp[2:4], val[2:])
+    
+    return write_register(pin_reg_addr, tmp)
+
+def read_register(reg_addr):
+    global res_msg
+
+    cmd_send = "md.l " + reg_addr + " 1"
+    resp_string = reg_addr[2:10] + ": .{8} " ##########################################################
+    time_wait = 1
+
+    line = scan_expected_resp(cmd_send, resp_string, time_wait)
+    if line == None:
+        sl.log("Error: Failed to read register with address, " + reg_addr + "\n", 'INFO')
+        res_msg = "Err: Failed to read register"
+        return Err_read_register
+
+    reg_val = line[10:18]
+    if reg_val.isalnum:
+        return reg_val
     else:
-        print("SPI_001_LOOPBACK success\n")
+        print("Error: Failed to read register with address, " + reg_addr + "\n", 'INFO')
+        return Err_read_register
 
-    if SPI_003_RWR_result != 0:
-        print("SPI_003_RWR failed\n")
-    else:
-        print("SPI_003_RWR success\n")
+def write_register(reg_addr, reg_val_write):
+    cmd_send = "mw.l " + reg_addr + " " + reg_val_write
+    send_command(cmd_send)
 
-    if SPI_001_LOOPBACK_result == 0 and SPI_003_RWR_result == 0:
-        print("All SPI testing are done\n")
-
-def spi_loopback():
+    reg_val_read = read_register(reg_addr)
+    if isinstance(reg_val_read, (int)):
+        return reg_val_read
+    
+def SPI_001_LOOPBACK():
     global s
-    global SPI_001_LOOPBACK_result
+    global sl
+    global res_msg
+    count = 0
 
+    ret = detect_CMD_startup()
+    if ret != 0:
+        return ret
+
+    sl.log("\n*************** SPI LOOPBACK TEST ***************", 'INFO')
+    sl.log("========== Set SPI Pinctrl ==========\n", 'INFO')
+    ret = set_spi_pinctrl(GPIO_PIN_MOSI, GPIO_PIN_MISO)
+    if ret < 0:
+        return ret
+
+    sl.log("========== SPI Loopback Test ==========", 'INFO') 
     for x in range(len(spi_mode)):
         for y in range(len(chip_sel)):
-            x = str(x)
-            y = str(y)
+            count += 1
+            sl.log("SPI loopback #" + str(count), 'INFO')
             hex_val = "FFFF"
 
             while hex_val == "0000" or hex_val == "FFFF":
                 hex_val = [random.choice('0123456789ABCDEF') for z in range(4)]
                 hex_val = "".join(hex_val)
 
-            cmd_send = "sspi " + spi_dev + ":" + y + "." + x + " " + bit_len + " " + hex_val
+            cmd_send = "sspi " + spi_dev[1] + ":" + str(y) + "." + str(x) + " " + bit_len + " " + hex_val
             send_command(cmd_send)
+            time.sleep(1)
 
             while True:
                 line = s.readline()
-                print(line)
-
-                match = re.search(hex_val, line.decode('utf-8'))
-
-                if match:
-                    print(hex_val + " found\n")
-                    SPI_001_LOOPBACK_result += 1
+                if s.inWaiting():
+                    sl.log(line, 'DEBUG')
+                    match = re.search(hex_val, line.decode('utf-8')) #line.decode('utf-8')
+                else:
                     break
 
-                if len(line) == 0:
-                    print(hex_val + " not found.\n")
-                    return Err_loopback
-                
-    return SPI_001_LOOPBACK_result
-                
-def spi_read_write():
+            if match:
+                sl.log(hex_val + " found\n", 'INFO')
+            else:
+                sl.log(hex_val + " not found\n", 'INFO')
+                res_msg = "Err: SPI loopback test fail"
+                return Err_loopback
+    
+    res_msg = "PASSED: SPI_001_LOOPBACK test runs successfully"
+    return 0
+
+def SPI_002_RWR():
     global s
-    global SPI_003_RWR_result
+    global sl
+    global res_msg
 
-    cmd_send = "sspi " + spi_dev + ":" + chip_sel[0] + "." + spi_mode[3] + " " + bit_len + " " + device_id_addr
+    ret = detect_CMD_startup()
+    if ret != 0:
+        return ret
+
+    sl.log("\n*************** SPI READ AND WRITE TEST ***************", 'DEBUG')
+    sl.log("========== ADXL345 Test: Read device ID ==========", 'DEBUG')    
+    cmd_send = "sspi " + spi_dev[0] + ":" + chip_sel[0] + "." + spi_mode[3] + " " + bit_len + " " + device_id_addr
     send_command(cmd_send)
+    send_command(cmd_send)      # sending the command twice to workaround first read issue
+    time.sleep(1)
 
-    device_id = "E5$"     # ensure return value ends with E5
+    device_id = "E5"     # ensure return value ends with E5
 
     while True:
         line = s.readline()
-        print(line)
-
-        match = re.search(device_id, line.decode('utf-8'))
-
-        if match:
-            print("Device ID " + device_id + " found\n")
-            SPI_003_RWR_result += 1
+        if s.inWaiting():
+            sl.log(line)
+            match = re.search(device_id, line.decode('utf-8')) #line.decode('utf-8')
+        else:
             break
 
-        if len(line) == 0:
-            print(device_id + " not found.\n")
-            return Err_read_device_id
+    if match:
+        sl.log("Device ID " + device_id + " found\n", 'INFO')
+    else:
+        sl.log("Device ID " + device_id + " not found", 'INFO')
+        res_msg = "Err: Fail to read device ID #E5"
+        return Err_read_device_id
+    
+    if line == None:
+        sl.log("Device ID " + device_id + " not found.\n", 'INFO')
+        res_msg = "Err: Fail to read device ID #E5"
+        return Err_read_device_id
 
-    # write 0xA5 to address 0x1F
-    cmd_send = "sspi " + spi_dev + ":" + chip_sel[0] + "." + spi_mode[3] + " " + bit_len + " 1FA5"
-    send_command(cmd_send)
-    SPI_003_RWR_result += 1
+    sl.log("========== ADXL345 Test: Read and Write ==========", 'DEBUG') 
+    for x in range(5):
+        hex_val = "FF"
 
-    # read 0x00 from address 0x9F
-    cmd_send = "sspi " + spi_dev + ":" + chip_sel[0] + "." + spi_mode[3] + " " + bit_len + " 9F00"
-    send_command(cmd_send)
+        while hex_val == "00" or hex_val == "FF":
+            hex_val = [random.choice('0123456789ABCDEF') for z in range(2)]
+            hex_val = "".join(hex_val)
 
-    while True:
-        line = s.readline()
-        print(line)
+        # write to address 0x1F
+        cmd_send = "sspi " + spi_dev[0] + ":" + chip_sel[0] + "." + spi_mode[3] + " " + bit_len + " 1F" + hex_val
+        send_command(cmd_send)
 
-        match = re.search("A5$", line.decode('utf-8'))
+        # read 0x00 from address 0x9F
+        cmd_send = "sspi " + spi_dev[0] + ":" + chip_sel[0] + "." + spi_mode[3] + " " + bit_len + " 9F00"
+        send_command(cmd_send)
+
+        while True:
+            line = s.readline()
+            if s.inWaiting():
+                sl.log(line, 'DEBUG')
+                match = re.search(hex_val, line.decode('utf-8')) #line.decode('utf-8')
+            else:
+                break
 
         if match:
-            print("Write value A5 found\n")
-            SPI_003_RWR_result += 1
-            break
-
-        if len(line) == 0:
-            print("Write value A5 not found.\n")
+            sl.log("Write value " + hex_val + " found\n", 'INFO')
+        else:
+            sl.log("Write value " + hex_val + " not found\n", 'INFO')
+            res_msg = "Err: Failed to write and read with ADXL345"
             return Err_read_and_write
-            
-    return SPI_003_RWR_result
+
+    res_msg = "PASSED: SPI_002_RWR test runs successfully"
+    return 0
+
+def run_test(COM, handling_path):
+    global sl
+    global res_msg
+
+    sl = sf.test_log(handling_path, console=False)
+    sl.log("IP = SPI", 'WARN')
+
+    open_COMPORT(COM)
+
+    SPI_001_LOOPBACK_result = SPI_001_LOOPBACK()
+    sl.log("SPI_001_LOOPBACK " + str(SPI_001_LOOPBACK_result) + ' ' + res_msg, 'WARN')
+
+    SPI_002_RWR_result = SPI_002_RWR()
+    sl.log("SPI_002_RWR " + str(SPI_002_RWR_result) + ' ' + res_msg, 'WARN')
+
+    close_COMPORT()
+    sl.close()
 
 def main():
-    global SPI_001_LOOPBACK_result
-    global SPI_003_RWR_result
+    current_path = path.dirname( path.abspath(__file__) )
 
-    # detect cmd input prompt
-    SPI_001_LOOPBACK_result = detect_CMD_startup()
-    if SPI_001_LOOPBACK_result < 0:
-        summarize_test_id()
-        return -1
-
-    # SPI loopback test
-    print("\n*************** SPI LOOPBACK TEST ***************")
-    SPI_001_LOOPBACK_result = spi_loopback()
-    if SPI_001_LOOPBACK_result < 0:
-        summarize_test_id()
-        return -1
-
-    # SPI read/write test
-    print("\n*************** SPI READ AND WRITE TEST ***************")
-    SPI_003_RWR_result = spi_read_write()
-    if SPI_003_RWR_result < 0:
-        summarize_test_id()
-        return -1
-
-    summarize_test_id()
+    run_test('COM4', current_path)
 
     return 0
 
 if __name__ == "__main__":
-    open_COMPORT()
     main()
-    close_COMPORT()
