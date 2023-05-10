@@ -1,0 +1,212 @@
+IP = SPI
+COM12 open success
+b''
+b''
+b''
+b'\r\n'
+b'U-Boot SPL 2022.10-00086-gd9a277c89c-dirty (May 05 2023 - 02:01:02 -0700)\r\n'
+b'WDT:   Started watchdog@152d0000 with servicing (15s timeout)\r\n'
+b'Trying to boot from RAM\r\n'
+b'\r\n'
+b'OpenSBI v1.0\r\n'
+b'   ____                    _____ ____ _____\r\n'
+b'  / __ \\                  / ____|  _ \\_   _|\r\n'
+b' | |  | |_ __   ___ _ __ | (___ | |_) || |\r\n'
+b" | |  | | '_ \\ / _ \\ '_ \\ \\___ \\|  _ < | |\r\n"
+b' | |__| | |_) |  __/ | | |____) | |_) || |_\r\n'
+b'  \\____/| .__/ \\___|_| |_|_____/|____/_____|\r\n'
+b'        | |\r\n'
+b'        |_|\r\n'
+b'\r\n'
+b''
+b'Platform Name             : StarFive JH8100 FPGA\r\n'
+b'Platform Features         : medeleg\r\n'
+b'Platform HART Count       : 8\r\n'
+b'Platform IPI Device       : aclint-mswi\r\n'
+b'Platform Timer Device     : aclint-mtimer @ 1000000Hz\r\n'
+b'Platform Console Device   : cadence_uart\r\n'
+b'Platform HSM Device       : ---\r\n'
+b'Platform Reboot Device    : ---\r\n'
+b'Platform Shutdown Device  : ---\r\n'
+b'Firmware Base             : 0x40000000\r\n'
+b'Firmware Size             : 308 KB\r\n'
+b'Runtime SBI Version       : 0.3\r\n'
+b'\r\n'
+b'Domain0 Name              : root\r\n'
+b'Domain0 Boot HART         : 0\r\n'
+b'Domain0 HARTs             : 0*,1*,2*,3*,4*,5*,6*,7*\r\n'
+b'Domain0 Region00          : 0x0000000002000000-0x000000000200ffff (I)\r\n'
+b'Domain0 Region01          : 0x0000000040000000-0x000000004007ffff ()\r\n'
+b'Domain0 Region02          : 0x0000000000000000-0xffffffffffffffff (R,W,X)\r\n'
+b'Domain0 Next Address      : 0x0000000040100000\r\n'
+b'Domain0 Next Arg1         : 0x00000000401834c8\r\n'
+b'Domain0 Next Mode         : S-mode\r\n'
+b'Domain0 SysReset          : yes\r\n'
+b'\r\n'
+b'Boot HART ID              : 0\r\n'
+b'Boot HART Domain          : root\r\n'
+b'Boot HART ISA             : rv64imafdcsux\r\n'
+b'Boot HART Features        : scounteren,mcounteren\r\n'
+b'Boot HART PMP Count       : 16\r\n'
+b'Boot HART PMP Granularity : 4096\r\n'
+b'Boot HART PMP Address Bits: 35\r\n'
+b'Boot HART MHPM Count      : 8\r\n'
+b'Boot HART MIDELEG         : 0x0000000000000222\r\n'
+b'Boot HART MEDELEG         : 0x000000000000b109\r\n'
+b'\r\n'
+b'\r\n'
+b'U-Boot 2022.10-00086-gd9a277c89c-dirty (May 05 2023 - 02:01:02 -0700)\r\n'
+b'\r\n'
+b'CPU:   rv64imafdc\r\n'
+b'Model: StarFive JH8100 FPGA\r\n'
+b'DRAM:  2 GiB\r\n'
+b''
+b'Core:  102 devices, 20 uclasses, devicetree: separate\r\n'
+b'WDT:   Started watchdog@152d0000 with servicing (15s timeout)\r\n'
+b'MMC:   \r\n'
+b'Loading Environment from nowhere... OK\r\n'
+b'In:    serial@10000000\r\n'
+b'Out:   serial@10000000\r\n'
+b'Err:   serial@10000000\r\n'
+b'Model: StarFive JH8100 FPGA\r\n'
+b'Net:   eth0: gmac@c20100000\r\n'
+b'Hit any key to stop autoboot:  2 \x08\x08\x08 1 \x08\x08\x08 0 \r\n'
+b'StarFive # '
+StarFive # found
+
+
+*************** SPI LOOPBACK TEST ***************
+========== Set SPI Pinctrl ==========
+
+b'md.l 0x150d0054 1\r\n'
+b'150d0054: 00000000                             ....\r\n'
+150d0054: .{8}  found
+
+b'mw.l 0x150d0054 5f000000\r\n'
+b'StarFive # md.l 0x150d0054 1\r\n'
+b'150d0054: 5f000000                             ..._\r\n'
+150d0054: .{8}  found
+
+b'md.l 0x150d0014 1\r\n'
+b'150d0014: 00000000                             ....\r\n'
+150d0014: .{8}  found
+
+b'mw.l 0x150d0014 2b000000\r\n'
+b'StarFive # md.l 0x150d0014 1\r\n'
+b'150d0014: 2b000000                             ...+\r\n'
+150d0014: .{8}  found
+
+b'md.l 0x150d0018 1\r\n'
+b'150d0018: 00000000                             ....\r\n'
+150d0018: .{8}  found
+
+b'mw.l 0x150d0018 1\r\n'
+b'StarFive # md.l 0x150d0018 1\r\n'
+b'150d0018: 00000001                             ....\r\n'
+150d0018: .{8}  found
+
+b'md.l 0x150d00b8 1\r\n'
+b'150d00b8: 00000000                             ....\r\n'
+150d00b8: .{8}  found
+
+b'mw.l 0x150d00b8 1a1a1a1a\r\n'
+b'StarFive # md.l 0x150d00b8 1\r\n'
+b'150d00b8: 1a1a1a1a                             ....\r\n'
+150d00b8: .{8}  found
+
+b'md.l 0x150d0058 1\r\n'
+b'150d0058: 00000000                             ....\r\n'
+150d0058: .{8}  found
+
+b'mw.l 0x150d0058 0\r\n'
+b'StarFive # md.l 0x150d0058 1\r\n'
+b'150d0058: 00000000                             ....\r\n'
+150d0058: .{8}  found
+
+========== SPI Loopback Test ==========
+SPI loopback #1
+b'sspi 1:0.0 16 B686\r\n'
+b'B686\r\n'
+B686 found
+
+SPI loopback #2
+b'sspi 1:1.0 16 F2E6\r\n'
+b'F2E6\r\n'
+F2E6 found
+
+SPI loopback #3
+b'sspi 1:0.1 16 0799\r\n'
+b'0799\r\n'
+0799 found
+
+SPI loopback #4
+b'sspi 1:1.1 16 8D58\r\n'
+b'8D58\r\n'
+8D58 found
+
+SPI loopback #5
+b'sspi 1:0.2 16 9938\r\n'
+b'9938\r\n'
+9938 found
+
+SPI loopback #6
+b'sspi 1:1.2 16 B3D8\r\n'
+b'B3D8\r\n'
+B3D8 found
+
+SPI loopback #7
+b'sspi 1:0.3 16 11C5\r\n'
+b'11C5\r\n'
+11C5 found
+
+SPI loopback #8
+b'sspi 1:1.3 16 80F5\r\n'
+b'80F5\r\n'
+80F5 found
+
+SPI_001_LOOPBACK 0 PASSED: SPI_001_LOOPBACK test runs successfully
+b' \r\n'
+b'StarFive # '
+StarFive # found
+
+
+*************** SPI READ AND WRITE TEST ***************
+========== ADXL345 Test: Read device ID ==========
+b'sspi 0:0.3 16 8000\r\n'
+b'F2F2\r\n'
+b'StarFive # sspi 0:0.3 16 8000\r\n'
+b'E5E5\r\n'
+Device ID E5 found
+
+========== ADXL345 Test: Read and Write ==========
+b'sspi 0:0.3 16 1FD5\r\n'
+b'E5E5\r\n'
+b'StarFive # sspi 0:0.3 16 9F00\r\n'
+b'E5D5\r\n'
+Write value D5 found
+
+b'sspi 0:0.3 16 1FAB\r\n'
+b'D5D5\r\n'
+b'StarFive # sspi 0:0.3 16 9F00\r\n'
+b'D5AB\r\n'
+Write value AB found
+
+b'sspi 0:0.3 16 1FA5\r\n'
+b'ABAB\r\n'
+b'StarFive # sspi 0:0.3 16 9F00\r\n'
+b'ABA5\r\n'
+Write value A5 found
+
+b'sspi 0:0.3 16 1F48\r\n'
+b'A5A5\r\n'
+b'StarFive # sspi 0:0.3 16 9F00\r\n'
+b'A548\r\n'
+Write value 48 found
+
+b'sspi 0:0.3 16 1F9C\r\n'
+b'4848\r\n'
+b'StarFive # sspi 0:0.3 16 9F00\r\n'
+b'489C\r\n'
+Write value 9C found
+
+SPI_002_RWR 0 PASSED: SPI_002_RWR test runs successfully

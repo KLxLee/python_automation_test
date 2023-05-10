@@ -1,0 +1,4 @@
+bitfile_0077
+IP = SPI
+SPI_001_LOOPBACK 0 PASSED: SPI_001_LOOPBACK test runs successfully
+SPI_002_RWR 0 PASSED: SPI_002_RWR test runs successfully
