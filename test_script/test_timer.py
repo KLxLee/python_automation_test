@@ -8,7 +8,7 @@ import std_func as sf
 timer_testing_period = 5
 timer_tolerance = 0.1
 unit_timer_perIP = 4
-SiFive_timer_base_addr = ["15200000", "15210000"]
+StarFive_timer_base_addr = ["15200000", "15210000"]
 reg_timer_unit_offset = "0x40"
 reg_timer_enable_offset = "0x10"
 reg_timer_value_offset = "0x18"
@@ -146,7 +146,7 @@ def TIMER_001_RISCV():
   res_msg = "Pass: RISCV timer of CPU run accurate within tolerance, " + str(timer_tolerance) + " in period " + str(timer_testing_period)
   return 0
   
-def TIMER_003_SIFIVE():
+def TIMER_003_STARFIVE():
   global timer_testing_period
   global timer_tolerance
   global res_msg
@@ -165,13 +165,13 @@ def TIMER_003_SIFIVE():
     time_reading = ret
 
   if time_reading < (timer_testing_period - timer_tolerance):
-    res_msg = "Err: SiFive timer too slow"
+    res_msg = "Err: StarFive timer too slow"
     return Err_timer_slow
   elif time_reading > (timer_testing_period + timer_tolerance):
-    res_msg = "Err: SiFive timer too fast"
+    res_msg = "Err: StarFive timer too fast"
     return Err_timer_fast
   
-  res_msg = "Pass: SiFive timer of CPU run accurate within tolerance, " + str(timer_tolerance) + " in period " + str(timer_testing_period)
+  res_msg = "Pass: StarFive timer of CPU run accurate within tolerance, " + str(timer_tolerance) + " in period " + str(timer_testing_period)
   return 0
 
 def read_register(reg_addr):
@@ -196,8 +196,10 @@ def read_register(reg_addr):
 def write_register(reg_addr, reg_val_write):
   global res_msg
 
+  time.sleep(0.1)
   cmd_send = "mw.l " + reg_addr + " " + reg_val_write
   send_command(cmd_send)
+  time.sleep(0.1)
 
   reg_val_read = read_register(reg_addr)
   if isinstance(reg_val_read, (int)):
@@ -248,7 +250,7 @@ def start_timer_test(unit_base_addr):
     return reg_val2
   
   if reg_val1 == reg_val2:
-    res_msg = "Err: Failed to start SiFive timer by controlling register"
+    res_msg = "Err: Failed to start StarFive timer by controlling register"
     return Err_start_timer_test
   else:
     return 0 
@@ -269,12 +271,12 @@ def stop_timer_test(unit_base_addr):
     return reg_val2
   
   if reg_val1 != reg_val2:
-    res_msg = "Err: Failed to stop SiFive timer by controlling register"
+    res_msg = "Err: Failed to stop StarFive timer by controlling register"
     return Err_stop_timer_test
   else:
     return 0 
 
-def TIMER_002_SIFIVE_REG():
+def TIMER_002_STARFIVE_REG():
   global unit_timer_perIP
   global reg_timer_unit_offset
   global res_msg
@@ -283,7 +285,7 @@ def TIMER_002_SIFIVE_REG():
   if ret != 0:
     return ret
 
-  for base_addr in SiFive_timer_base_addr:
+  for base_addr in StarFive_timer_base_addr:
     for unit in range(unit_timer_perIP):
       unit_base_addr = hex(from_hex(base_addr) + (from_hex(reg_timer_unit_offset)*unit))
       ret = stop_timer_test(unit_base_addr)
@@ -299,7 +301,7 @@ def TIMER_002_SIFIVE_REG():
         res_msg = "Err: Timer failed at unit " + str(unit) + " with base address, " + base_addr
         return ret
 
-  res_msg = "Pass: All units of SiFive timer can run by accessing register directly"
+  res_msg = "Pass: All units of StarFive timer can run by accessing register directly"
   return 0
 
 def run_test_RISCV_ticktimer(COM, handling_path):
@@ -319,14 +321,14 @@ def run_test_RISCV_ticktimer(COM, handling_path):
   TIMER_001_result_msg = res_msg
   sl.log("TIMER_001_RISCV " + str(TIMER_001_result) + ' ' + TIMER_001_result_msg, 'WARN')
 
-  TIMER_002_result = TIMER_002_SIFIVE_REG()
+  TIMER_002_result = TIMER_002_STARFIVE_REG()
   TIMER_002_result_msg = res_msg
-  sl.log("TIMER_002_SIFIVE_REG " + str(TIMER_002_result) + ' ' + TIMER_002_result_msg, 'WARN') 
+  sl.log("TIMER_002_STARFIVE_REG " + str(TIMER_002_result) + ' ' + TIMER_002_result_msg, 'WARN') 
 
   Close_COMPORT()
   sl.close()
 
-def run_test_SIFIVE_ticktimer(COM, handling_path):
+def run_test_STARFIVE_ticktimer(COM, handling_path):
   global sl
   global res_msg
   global TIMER_003_result
@@ -336,9 +338,9 @@ def run_test_SIFIVE_ticktimer(COM, handling_path):
 
   Open_COMPORT(COM)
 
-  TIMER_003_result = TIMER_003_SIFIVE()
+  TIMER_003_result = TIMER_003_STARFIVE()
   TIMER_003_result_msg = res_msg
-  sl.log("TIMER_003_SIFIVE " + str(TIMER_003_result) + ' ' + TIMER_003_result_msg, 'WARN')
+  sl.log("TIMER_003_STARFIVE " + str(TIMER_003_result) + ' ' + TIMER_003_result_msg, 'WARN')
 
   Close_COMPORT()
   sl.close()
@@ -371,15 +373,15 @@ if __name__ == "__main__":
 # 3 Use 'timer get' to get the period from start
 # 4 Determine the time is accurate
 
-# TIMER_002_SIFIVE_REG
+# TIMER_002_STARFIVE_REG
 # 1 Use 'mw.l' to write register to stop timer unit
 # 2 Use 'md.l' to read timer count register, delay one seconds, and read again
 # 3 Makesure both results are same.
 # 4 Repeat the steps with start timer and makesure both result are not same.
 # 5 Repeat the steps with stop timer.
 
-# TIMER_003_SIFIVE
-# 1 Use the dtb which not enable Sifive timer
+# TIMER_003_STARFIVE
+# 1 Use the dtb which not enable StarFive timer
 # 1 Use 'timer start' to start timer
 # 2 Delay 5 seconds
 # 3 Use 'timer get' to get the period from start
