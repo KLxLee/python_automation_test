@@ -175,8 +175,8 @@ def simple_gpio_lpbk_test(p1, p2, state_set):
     return state_get
   
   if state_set != state_get:
-    res_msg = "Err: Simple loopback test at GPIO" + str(p1) + " as output\
-(value=" + str(state_set) + ") and GPIO" + str(p2) + " as input"
+    res_msg = "Err: Simple loopback test at " + str(GPIO_BANKNAME) + str(p1) + " as output\
+(value=" + str(state_set) + ") and " + str(GPIO_BANKNAME) + str(p2) + " as input"
     return Err_simple_gpio_lpbk_test
   
   return 0
@@ -220,7 +220,7 @@ def GPIO_002_LPBK_TEST():
   if ret < 0:
     return ret
   
-  res_msg = "Pass: Success to do loopback gpio test with GPIO pin " + str(GPIO_PIN_1) + " and " + str(GPIO_PIN_2)
+  res_msg = "Pass: Success to do loopback gpio test with " + str(GPIO_BANKNAME) + " pins " + str(GPIO_PIN_1) + " and " + str(GPIO_PIN_2)
   return 0
 
 def run_test(COM, handling_path):
