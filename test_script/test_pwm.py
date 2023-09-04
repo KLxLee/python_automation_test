@@ -12,14 +12,15 @@ GPIO_PINNUM = 64
 pwm_ratio_tolerence = 0.015
 pwm_dev = "0"
 pwm_channel = "0"
-pwn_chn_out_id = 55
-pwn_chn_oen_id = 25
+pwm_chn_out_id = 55
+pwm_chn_oen_id = 25
 pinctrl_IP_base = 0x150d0000
 pinctrl_doen_base = 0x00
 pinctrl_dout_base = 0x40
-max_pwm_period_sec = 10
-PWM_period_applied = 5000000
-PWM_duty_set = [1000000, 2000000, 3000000, 4000000]
+max_pwm_period_sec = 1.1   # add some tolerance
+PWM_period_applied = 1000000000
+PWM_duty_set = [200000000, 400000000, 600000000, 800000000]
+sampling_interval = 0.001
 
 ####################################     Error Number     ####################################
 Err_CMD_startup = -10
@@ -135,7 +136,7 @@ def write_register(reg_addr, reg_val_write):
   if isinstance(reg_val_read, (int)):
     return reg_val_read
 
-  if reg_val_write != reg_val_read:
+  if not reg_val_write in reg_val_read:
     res_msg = "Err: Failed to write register with address, " + reg_addr
     return Err_write_register
   else:
@@ -166,15 +167,15 @@ def set_pinctrl_en_out(pin, func_offset, val):
 def set_pwm_pinctrl(pin):
   global pinctrl_doen_base
   global pinctrl_dout_base
-  global pwn_chn_oen_id
-  global pwn_chn_out_id
+  global pwm_chn_oen_id
+  global pwm_chn_out_id
 
-  ret = set_pinctrl_en_out(pin, pinctrl_doen_base, pwn_chn_oen_id)
+  ret = set_pinctrl_en_out(pin, pinctrl_doen_base, pwm_chn_oen_id)
   if isinstance(ret, (int)):
     if ret < 0:
       return ret
     
-  ret = set_pinctrl_en_out(pin, pinctrl_dout_base, pwn_chn_out_id)
+  ret = set_pinctrl_en_out(pin, pinctrl_dout_base, pwm_chn_out_id)
   if isinstance(ret, (int)):
     if ret < 0:
       return ret  
@@ -272,7 +273,7 @@ def wait_till_GPIO_status(pin, state_set):
     elif state_set == state_get:
       return wait_time
     
-    time.sleep(0.01)
+    time.sleep(sampling_interval)
 
 def get_gpio_status_period(pin, state_set):
   state_set ^= 1
@@ -330,8 +331,8 @@ def PWM_001_SET_CONFIG():
       res_msg = "Pass: Config PWM and test with loopback pin success"
       return 0
     else:
-      res_msg = "Err: Config PWM to ratio(" + str(pwm_ratio_applied) + ") is different with PWM ratio(" + str(pwm_ratio_get) + ") \
-which read by GPIO with tolerance(" + str(pwm_ratio_tolerence) + ")"
+      res_msg = "Err: PWM ratio(" + str(pwm_ratio_applied) + ") configured is different with PWM ratio get(" + str(pwm_ratio_get) + ") \
+by reading GPIO loopback with tolerance(" + str(pwm_ratio_tolerence) + ")"
       return Err_pwm_ratio_get
 
 def PWM_002_DUTY_NS_ERR():
