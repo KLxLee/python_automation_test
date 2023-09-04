@@ -26,12 +26,16 @@ SDMMC_speed_mode_name = [
 FAT_Dummy_File_Name = "dummy.txt"
 ext4_root_file_DIR = "/etc/"
 ext4_root_file_Name = "profile"
-checkerboard_pattern = '0xaa'
+checkerboard_pattern_1 = 'aaaacccc'
+checkerboard_pattern_2 = '12345678'
 Test_len = '0x2000'
 mem_addr1 = "0x50000000"
 mem_addr2 = "0x51000000"
 mmc_rw_blk = '0'
 mmc_rw_cnt = '2'
+RPMB_auth_key = ['aaaaaaaa', 'aaaaaaaa', 'aaaaaaaa', 'aaaaaaaa', 'aaaaaaaa'
+                 'aaaaaaaa', 'aaaaaaaa', 'aaaaaaaa', 'aaaaaaaa', 'aaaaaaaa']
+RPMB_auth_key_mem_addr = '0x52000000'
 
 ####################################     Error Number     ####################################
 Err_CMD_startup = -10
@@ -50,6 +54,10 @@ Err_load_FAT_boot_img = -22
 Err_find_dev_ID = -23
 Err_boot_part_not_FAT = -24
 Err_spl_boot_source = -25
+Err_mmc_rpmb_write = -26
+Err_mmc_rpmb_read = -27
+Err_RPMB_counter = -28
+Err_test_rw_rpmb = -29
 
 ###################################### Global Variable #######################################
 Device_ID_List = []
@@ -137,6 +145,21 @@ def init_mmc():
   send_command("mmc info")
   time.sleep(1)
 
+  total_num_device = 1
+  s.reset_input_buffer()
+  send_command("mmc list")
+  while True:
+    line = s.readline()
+    sl.log(line, 'DEBUG')
+    if len(line) == 0:
+      break
+    if re.search(": [0-9] ", line.decode('utf-8')):
+      total_num_device = total_num_device + 1
+
+  for dev_num in range(total_num_device):
+    send_command("mmc dev " + str(dev_num))
+    time.sleep(1)
+
 def find_device(dev_type):
   global Device_ID_List
   global s
@@ -184,9 +207,9 @@ def select_device(DeviceID):
 
 def detect_file_system():
   cmd_send = "mmc part"
-  resp_string = "\t0b\r\n"
   time_wait = 2
 
+  resp_string = "\t0b\r\n|\t0c\r\n|\t0c Boot\r\n"
   line = scan_expected_resp(cmd_send, resp_string, time_wait)
   if line:
     Present_PartitionFS = "fat"
@@ -211,7 +234,7 @@ def detect_file_system_from_ID(Part_ID):
 
   line = scan_expected_resp(cmd_send, resp_string, time_wait)
   if line:
-    if re.search("\t0b\r\n", line):
+    if re.search("\t0b\r\n|\t0c\r\n|\t0c Boot\r\n", line):
       return "fat"
     if re.search("\t83\r\n", line):
       return "ext4"
@@ -324,12 +347,38 @@ def mmc_read(mem_addr, blk, cnt):
   else:
     return 0
 
+def mmc_rpmb_write(mem_addr, blk, cnt):
+  global RPMB_auth_key_mem_addr
+  global res_msg
+  cmd_send = "mmc rpmb write " + mem_addr + " " + blk + " " + cnt + " " + RPMB_auth_key_mem_addr
+  resp_string = cnt + " RPMB blocks written: OK"
+  time_wait = 10
+  line = scan_expected_resp(cmd_send, resp_string, time_wait)
+  if line == None:
+    res_msg = 'Err: mmc write ' + cnt + ' blocks of data in to RPMB partition'
+    return Err_mmc_rpmb_write
+  else:
+    return 0
+
+def mmc_rpmb_read(mem_addr, blk, cnt):
+  global RPMB_auth_key_mem_addr
+  global res_msg
+  cmd_send = "mmc rpmb read " + mem_addr + " " + blk + " " + cnt + " " + RPMB_auth_key_mem_addr
+  resp_string = cnt + " RPMB blocks read: OK"
+  time_wait = 10
+  line = scan_expected_resp(cmd_send, resp_string, time_wait)
+  if line == None:
+    res_msg = 'Err: mmc read ' + cnt + ' blocks of data in to RPMB partition'
+    return Err_mmc_rpmb_read
+  else:
+    return 0
+
 def write_memory(addr, data_pattern, data_len):
   cmd_send = "mw.l " + addr + " " + data_pattern + " " + data_len
   send_command(cmd_send)
   time.sleep(1)
 
-def cmp_memory(addr1, addr2, len):
+def cmp_memory_byte(addr1, addr2, len):
   len_dec = str(int(len, 16))
   cmd_send = "cmp.b " + addr1 + " " + addr2 + " " + len
   resp_string = "Total of " + len_dec + " byte"
@@ -340,6 +389,37 @@ def cmp_memory(addr1, addr2, len):
     return -1
   else: 
     return 0
+
+def from_hex(hexdigits):
+    return int(hexdigits, 16)
+
+def write_RPMB_Auth_key_in_memory():
+  global RPMB_auth_key
+  global RPMB_auth_key_mem_addr
+
+  addr = RPMB_auth_key_mem_addr
+
+  for key in RPMB_auth_key:
+    write_memory(addr, key, '1')
+    addr = from_hex(addr)
+    addr = hex(addr + 4)
+
+def get_RPMB_counter():
+  global res_msg
+
+  cmd_send = "mmc rpmb counter "
+  resp_string = "RPMB Write counter= "
+  time_wait = 3
+
+  line = scan_expected_resp(cmd_send, resp_string, time_wait)
+  if line == None:
+    res_msg = 'Err: Failed to get RPMB counter'
+    return Err_RPMB_counter
+  
+  counter = line.strip(resp_string)
+  counter = ''.join(counter.splitlines())
+  
+  return from_hex(counter)
 
 def test_FAT_FS():
   global FAT_Dummy_File_Name
@@ -360,7 +440,7 @@ def test_FAT_FS():
 
   remove_FAT_file(FAT_Dummy_File_Name)
   
-  ret = cmp_memory(mem_addr1, mem_addr2, Test_len)
+  ret = cmp_memory_byte(mem_addr1, mem_addr2, Test_len)
   if ret < 0:
     res_msg = "Err: Write Memory different at addr1, " + mem_addr1 + " and addr2, " + mem_addr2
     return Err_test_FAT_FS
@@ -377,7 +457,7 @@ def test_ext4_FS():
 
   file_name = ext4_root_file_DIR + ext4_root_file_Name
 
-  ret[ret, byte_load] = fileload("ext4", file_name, mem_addr1)
+  [ret, byte_load] = fileload("ext4", file_name, mem_addr1)
   if ret < 0:
     return ret
   
@@ -385,25 +465,25 @@ def test_ext4_FS():
   if ret < 0:
     return ret
 
-  ret = cmp_memory(mem_addr1, mem_addr2, byte_load)
+  ret = cmp_memory_byte(mem_addr1, mem_addr2, byte_load)
   if ret < 0:
     res_msg = "Err: Write Memory different at addr1, " + mem_addr1 + " and addr2, " + mem_addr2
     return Err_test_ext4_FS
   
   return 0
 
-def test_raw_dat():
+def test_raw_dat(data_pattern):
   global mem_addr1
   global mem_addr2
-  global checkerboard_pattern
   global mmc_rw_blk
   global mmc_rw_cnt
   global res_msg
 
   byte_len = (int(mmc_rw_cnt) * 512)
   byte_len_hex = hex(byte_len)
+  long_len_hex = hex(int(byte_len/4))
 
-  write_memory(mem_addr1, checkerboard_pattern, byte_len_hex)
+  write_memory(mem_addr1, data_pattern, long_len_hex)
 
   ret = mmc_write(mem_addr1, mmc_rw_blk, mmc_rw_cnt)
   if ret < 0:
@@ -413,11 +493,47 @@ def test_raw_dat():
   if ret < 0:
     return ret
 
-  ret = cmp_memory(mem_addr1, mem_addr2, byte_len_hex)
+  ret = cmp_memory_byte(mem_addr1, mem_addr2, byte_len_hex)
   if ret < 0:
     res_msg = "Err: Write Memory different at addr1, " + mem_addr1 + " and addr2, " + mem_addr2
     return Err_test_raw_dat
 
+  return 0
+
+def test_rw_rpmb(data_pattern):
+  global mem_addr1
+  global mem_addr2
+  global mmc_rw_blk
+  global mmc_rw_cnt
+  global res_msg
+
+  byte_len = (int(mmc_rw_cnt) * 256) # RPMB block size is 256 bytes
+  byte_len_hex = hex(byte_len)
+  long_len_hex = hex(int(byte_len/4))
+
+  write_memory(mem_addr1, data_pattern, long_len_hex)
+
+  RPMB_counter_before = get_RPMB_counter()
+
+  ret = mmc_rpmb_write(mem_addr1, mmc_rw_blk, mmc_rw_cnt)
+  if ret < 0:
+    return ret
+
+  ret = mmc_rpmb_read(mem_addr2, mmc_rw_blk, mmc_rw_cnt)
+  if ret < 0:
+    return ret
+
+  ret = cmp_memory_byte(mem_addr1, mem_addr2, byte_len_hex)
+  if ret < 0:
+    res_msg = "Err: Write Memory different at addr1, " + mem_addr1 + " and addr2, " + mem_addr2
+    return Err_test_rw_rpmb
+
+  RPMB_counter_after = get_RPMB_counter()
+
+  if RPMB_counter_after != (RPMB_counter_before + from_hex(mmc_rw_cnt)):
+    res_msg = "Err: RPMB counter after written " + mmc_rw_cnt + " blocks is " + str(RPMB_counter_after) + " but RPMB counter before written is " + str(RPMB_counter_before)
+    return Err_RPMB_counter
+  
   return 0
 
 def SDMMC_SCAN_DEV(dev_type):
@@ -443,6 +559,8 @@ def EMMC_001_SCAN_DEV():
 
 def SDMMC_RW_ALL_MODE(mode_ID_list):
   global command_dev_part
+  global checkerboard_pattern_1
+  global checkerboard_pattern_2
 
   ret = detect_CMD_startup()
   if ret != 0:
@@ -467,7 +585,10 @@ def SDMMC_RW_ALL_MODE(mode_ID_list):
       elif Part_FS == "ext4":
         ret = test_ext4_FS()
       else:
-        ret = test_raw_dat()
+        ret = test_raw_dat(checkerboard_pattern_1)
+        if ret < 0:
+          return ret
+        ret = test_raw_dat(checkerboard_pattern_2)
       
       if ret < 0:
         return ret
@@ -534,7 +655,7 @@ def sdmmc_load_FAT_boot_img(dev_type, dev='0', part='1', img_addr='0xa0000000', 
   if ret < 0:
     return ret
   
-  ret = cmp_memory(img_addr, valid_mem, data_len_hex)
+  ret = cmp_memory_byte(img_addr, valid_mem, data_len_hex)
   if ret < 0:
     res_msg = "Err: Write Memory different at addr1, " + mem_addr1 + " and addr2, " + mem_addr2
     return Err_load_FAT_boot_img
@@ -570,6 +691,52 @@ def SD_004_SPLBOOT():
 
 def EMMC_004_SPLBOOT():
   return sdmmc_splboot()
+
+def EMMC_RW_RPMB_ALL_MODE(mode_ID_list):
+  global checkerboard_pattern_1
+  global checkerboard_pattern_2
+
+  ret = detect_CMD_startup()
+  if ret != 0:
+    return ret
+
+  init_mmc()
+  ret = find_device('eMMC')
+  if ret != 0:
+    return ret
+  
+  write_RPMB_Auth_key_in_memory()
+
+  for DeviceID in Device_ID_List:
+    ret = select_device(DeviceID) 
+    if ret < 0:
+      return ret
+
+    for speed_mode_ID in mode_ID_list:
+      ret = set_speed_mode(speed_mode_ID)
+      if ret < 0:
+        return ret
+
+      ret = test_rw_rpmb(checkerboard_pattern_1)
+      if ret < 0:
+        return ret
+      
+      ret = test_rw_rpmb(checkerboard_pattern_2)
+      if ret < 0:
+        return ret
+
+  return 0
+
+def EMMC_005_RW_RPMB_ALL_MODE():
+  global eMMC_mode_ID
+  global res_msg
+
+  ret = EMMC_RW_RPMB_ALL_MODE(eMMC_mode_ID)
+  if ret < 0:
+    return ret
+
+  res_msg = "Pass: Read Write data to eMMC RPMB parition with all speed mode success"
+  return 0
 
 def SD_basic_test(COM, handling_path):
   global sl
@@ -665,6 +832,9 @@ def SD_spl_boot(COM, handling_path):
   SD_004_result_msg = res_msg
   sl.log("SD_004_SPLBOOT " + str(SD_004_result) + ' ' + SD_004_result_msg, 'WARN')
 
+  Close_COMPORT()
+  sl.close()
+
 def EMMC_spl_boot(COM, handling_path):
   global sl
   global res_msg
@@ -678,6 +848,26 @@ def EMMC_spl_boot(COM, handling_path):
   EMMC_004_result = EMMC_004_SPLBOOT()
   EMMC_004_result_msg = res_msg
   sl.log("EMMC_004_SPLBOOT " + str(EMMC_004_result) + ' ' + EMMC_004_result_msg, 'WARN')
+
+  Close_COMPORT()
+  sl.close()
+
+def EMMC_add_on_test(COM, handling_path):
+  global sl
+  global res_msg
+  global EMMC_005_result
+  global EMMC_005_result_msg
+
+  sl = sf.test_log(handling_path, console=False)
+
+  Open_COMPORT(COM)
+
+  EMMC_005_result = EMMC_005_RW_RPMB_ALL_MODE()
+  EMMC_005_result_msg = res_msg
+  sl.log("EMMC_005_RW_RPMB_ALL_MODE " + str(EMMC_005_result) + ' ' + EMMC_005_result_msg, 'WARN')
+
+  Close_COMPORT()
+  sl.close()
 
 def main():
   current_path = path.dirname( path.abspath(__file__) )
