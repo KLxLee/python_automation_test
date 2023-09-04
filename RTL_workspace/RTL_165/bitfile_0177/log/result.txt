@@ -1,0 +1,40 @@
+bitfile_0177
+IP = BOOTING
+BOOTING_001_INFO 0 Pass: Success to read U-boot info
+BOOTING_002_MEMORY 0 Pass: Success to read write memory
+IP = EMMC
+EMMC_001_SCAN_DEV 0 Pass: eMMC device found
+EMMC_002_RW_ALL_MODE -14 Err: speed mode set to HS200 (200MHz) is failed
+EMMC_003_LOAD_FAT_UBOOT_IMG 0 Pass: 
+EMMC_004_SPLBOOT 0 Pass: SPL BOOT from MMC success
+EMMC_005_RW_RPMB_ALL_MODE -14 Err: speed mode set to HS400 (200MHz) is failed
+IP = SD
+SD_001_SCAN_DEV 0 Pass: SD device found
+SD_002_RW_ALL_MODE 0 Pass: Read Write data to SD card with all speed mode success
+SD_003_LOAD_FAT_UBOOT_IMG 0 Pass: 
+SD_004_SPLBOOT 0 Pass: SPL BOOT from MMC success
+IP = Ethernet
+ETH_001_TFTP_BOOT_LINUX 0 Pass: U-boot boot to Linux with Ethernet TFTP success
+IP = UART
+UART_001_BOOT_U_BOOT_PROPER 0 Pass: Uboot SPL boot to Uboot.itb success
+IP = I2C
+I2C_001_SPEED 0 Pass: Success to set speed of I2C until 400000Hz
+I2C_002_RW 0 Pass: Success to read write data to EEPROM
+IP = PWM
+PWM_001_SET_CONFIG 0 Pass: Config PWM and test with loopback pin success
+PWM_002_DUTY_NS_ERR 0 Pass: Alert message showed after setting invalid PWM duty period
+PWM_003_DISABLE 0 Pass: Disable PWM success
+IP = GPIO
+GPIO_001_STATUS 0 Pass: Success to get gpio status
+GPIO_002_LPBK_TEST 0 Pass: Success to do loopback gpio test with SYS_EAST_GPIO pins 43 and 44
+IP = SPI
+SPI_001_LOOPBACK 0 PASSED: SPI_001_LOOPBACK test runs successfully
+SPI_002_RWR 0 PASSED: SPI_002_RWR test runs successfully
+IP = TIMER
+TIMER_001_RISCV 0 Pass: RISCV timer of CPU run accurate within tolerance, 0.1 in period 5
+TIMER_002_STARFIVE_REG -14 Err: Timer failed at unit 2 with base address, 121d0000
+TIMER_003_STARFIVE -12 Err: StarFive timer too slow
+IP = WATCHDOG
+WDT_001_PROBE 0 Pass: Success to probe Watchdog
+WDT_002_START_STOP_RESET -17 Err: failed to start Watchdog
+WDT_003_TRIGGER -20 Err: failed to trigger Watchdog

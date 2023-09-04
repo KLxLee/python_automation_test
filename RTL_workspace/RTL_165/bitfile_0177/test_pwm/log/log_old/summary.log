@@ -1,0 +1,4 @@
+IP = PWM
+PWM_001_SET_CONFIG 0 Pass: Config PWM and test with loopback pin success
+PWM_002_DUTY_NS_ERR 0 Pass: Alert message showed after setting invalid PWM duty period
+PWM_003_DISABLE 0 Pass: Disable PWM success

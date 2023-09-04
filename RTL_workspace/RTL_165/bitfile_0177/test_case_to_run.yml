@@ -1,0 +1,12 @@
+test_case:
+    - test_booting
+    - test_emmc
+    - test_sd
+    - test_ethernet
+    - test_uart
+    - test_i2c
+    - test_pwm
+    - test_gpio
+    - test_spi
+    - test_timer
+    - test_watchdog

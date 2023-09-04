@@ -1,0 +1,2 @@
+IP = Ethernet
+ETH_001_TFTP_BOOT_LINUX 0 Pass: U-boot boot to Linux with Ethernet TFTP success

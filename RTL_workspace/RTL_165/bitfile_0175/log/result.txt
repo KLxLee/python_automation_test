@@ -1,0 +1,7 @@
+bitfile_0175
+IP = XSPI
+XSPI_001_PROTECT_BASIC_TEST 0 Pass: 
+XSPI_002_ERASE_READ_WRITE 0 Pass: 
+XSPI_003_CROSS_BOUNDARY -18 Err: CRC result for erased data at basic memory wrong
+XSPI_004_LOAD_UBOOT_IMG 0 Pass: Success to load uboot image from RAM address 0xa0000000 to XSPI flash with offset0, size 1000000 bytes
+XSPI_005_SPLBOOT 0 Pass: SPL BOOT from SPI success

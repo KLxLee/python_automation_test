@@ -1,0 +1,137 @@
+OpenSBI v1.0
+   ____                    _____ ____ _____
+  / __ \                  / ____|  _ \_   _|
+ | |  | |_ __   ___ _ __ | (___ | |_) || |
+ | |  | | '_ \ / _ \ '_ \ \___ \|  _ < | |
+ | |__| | |_) |  __/ | | |____) | |_) || |_
+  \____/| .__/ \___|_| |_|_____/|____/_____|
+        | |
+        |_|
+
+Platform Name             : StarFive JH8100 FPGA
+Platform Features         : medeleg
+Platform HART Count       : 6
+Platform IPI Device       : aclint-mswi
+Platform Timer Device     : aclint-mtimer @ 4000000Hz
+Platform Console Device   : cadence_uart
+Platform HSM Device       : ---
+Platform Reboot Device    : ---
+Platform Shutdown Device  : ---
+Firmware Base             : 0x40000000
+Firmware Size             : 292 KB
+Runtime SBI Version       : 0.3
+
+Domain0 Name              : root
+Domain0 Boot HART         : 2
+Domain0 HARTs             : 0*,1*,2*,3*,4*,5*
+Domain0 Region00          : 0x0000000002000000-0x000000000200ffff (I)
+Domain0 Region01          : 0x0000000040000000-0x000000004007ffff ()
+Domain0 Region02          : 0x0000000000000000-0xffffffffffffffff (R,W,X)
+Domain0 Next Address      : 0x0000000040100000
+Domain0 Next Arg1         : 0x0000000040197d18
+Domain0 Next Mode         : S-mode
+Domain0 SysReset          : yes
+
+Boot HART ID              : 2
+Boot HART Domain          : root
+Boot HART ISA             : rv64imafdcbsuh
+Boot HART Features        : scounteren,mcounteren,mcountinhibit,sscofpmf,time
+Boot HART PMP Count       : 16
+Boot HART PMP Granularity : 4096
+Boot HART PMP Address Bits: 38
+Boot HART MHPM Count      : 12
+Boot HART MIDELEG         : 0x0000000000003666
+Boot HART MEDELEG         : 0x0000000000f0b509
+
+
+U-Boot 2023.01-00061-g4bfc9c8bc2-dirty (Aug 15 2023 - 20:21:08 +0800)
+
+CPU:   rv64imafdch
+Model: StarFive JH8100 FPGA
+DRAM:  8 GiB
+Core:  83 devices, 23 uclasses, devicetree: separate
+MMC:   mmc@1f120000: 0
+Loading Environment from nowhere... OK
+In:    serial@12160000
+Out:   serial@12160000
+Err:   serial@12160000
+Model: StarFive JH8100 FPGA
+Net:   eth0: ethernet@1f100000
+StarFive # md.l 0x12200000 6
+12200000: 00000000 00000000 00000000 00000000  ................
+12200010: 00000000 00000000                    ........
+StarFive # md.l 0x12200050 6
+12200050: 00000000 00000000 00000000 00000000  ................
+12200060: 00000000 00000000                    ........
+StarFive # misc list
+Device               Index     Driver
+-------------------------------------
+Slow bit rate configuration: 00010104
+can@12200000             0   ipms_can
+Slow bit rate configuration: 00010104
+can@12210000             1   ipms_can
+StarFive # misc can@12200000 0 0x50000000 0
+misc - Access miscellaneous devices with MISC uclass driver APIs
+
+Usage:
+misc list                       - list all miscellaneous devices
+misc read  name offset addr len - read `len' bytes starting at
+                                  `offset' of device `name'
+                                  to memory at `addr'
+misc write name offset addr len - write `len' bytes starting at
+                                  `offset' of device `name'
+                                  from memory at `addr'
+StarFive # misc write can@12200000 0 0x50000000 0
+cf->can_id = 0x ffffffff
+cf->len = 0x ff
+cf->data0 = 0x b5
+cf->data4 = 0x fd
+priv->reg_base = 0x 0000000012200000
+CANFD_RUBF_ID_OFFSET = 0x 0
+CANFD_RBUF_CTL_OFFSET = 0x 0
+CANFD_RUBF_ID_OFFSET = 0x 0
+CANFD_RBUF_CTL_OFFSET = 0x 0
+StarFive # md.l 0x12200000 6
+12200000: 1fffffff 000010c8 00000000 00000000  ................
+12200010: 00000000 00000000                    ........
+StarFive # md.l 0x12200050 6
+12200050: 00000000 00000000 00000000 00000000  ................
+12200060: 00000000 00000000                    ........
+StarFive # misc read can@12200000 0 0x50000000 0
+StarFive # md.l 0x12200000 6
+12200000: 00000000 00000000 00000000 00000000  ................
+12200010: 00000000 00000000                    ........
+StarFive # md.l 0x12200050 6
+12200050: 00000000 00000000 00000000 00000000  ................
+12200060: 00000000 00000000                    ........
+StarFive # md.l 0x50000000 10
+50000000: dfffffff dffb7f08 7f7fffb5 7fdffefd  ................
+50000010: fffff5f5 7dfffbfe 7ffff3fd fbffffef  .......}........
+50000020: f7ffffd7 3effffff fdfff57f fbfbbfff  .......>........
+50000030: ffffffff eef7ffff ffffffff dffff77f  ................
+StarFive # mw.l 0x50000000 0x12341234
+StarFive # mw.l 0x50000004 0x56785678
+StarFive # md.l 0x50000000 10
+50000000: 12341234 56785678 7f7fffb5 7fdffefd  4.4.xVxV........
+50000010: fffff5f5 7dfffbfe 7ffff3fd fbffffef  .......}........
+50000020: f7ffffd7 3effffff fdfff57f fbfbbfff  .......>........
+50000030: ffffffff eef7ffff ffffffff dffff77f  ................
+StarFive # misc write can@12200000 0 0x50000000 0
+cf->can_id = 0x 12341234
+cf->len = 0x 78
+cf->data0 = 0x b5
+cf->data4 = 0x fd
+priv->reg_base = 0x 0000000012200000
+CANFD_RUBF_ID_OFFSET = 0x 0
+CANFD_RBUF_CTL_OFFSET = 0x 0
+CANFD_RUBF_ID_OFFSET = 0x 0
+CANFD_RBUF_CTL_OFFSET = 0x 0
+StarFive # md.l 0x50000000 10
+50000000: 12341234 56785678 7f7fffb5 7fdffefd  4.4.xVxV........
+50000010: fffff5f5 7dfffbfe 7ffff3fd fbffffef  .......}........
+50000020: f7ffffd7 3effffff fdfff57f fbfbbfff  .......>........
+50000030: ffffffff eef7ffff ffffffff dffff77f  ................
+StarFive # md.l 0x12200000 6
+12200000: 00000234 00001008 000000b5 000000fd  4...............
+12200010: 00000000 00000000                    ........
+StarFive #

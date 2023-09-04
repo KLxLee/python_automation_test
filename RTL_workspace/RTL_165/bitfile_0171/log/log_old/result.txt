@@ -1,0 +1,12 @@
+bitfile_0094
+IP = Ethernet
+ETH_001_TFTP_BOOT_LINUX -31 Err: Failed to start Linux
+IP = GPIO
+GPIO_001_STATUS 0 Pass: Success to get gpio status
+GPIO_002_LPBK_TEST 0 Pass: Success to do loopback gpio test with GPIO pin 23 and 24
+IP = PWM
+PWM_001_SET_CONFIG -10 Err: Uboot is not ready for receiving command
+PWM_002_DUTY_NS_ERR -10 Err: Uboot is not ready for receiving command
+PWM_003_DISABLE -10 Err: Uboot is not ready for receiving command
+IP = UART
+UART_001_BOOT_U_BOOT_PROPER 0 Pass: Uboot SPL boot to Uboot.itb success

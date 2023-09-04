@@ -1,0 +1,3 @@
+IP = GPIO
+GPIO_001_STATUS 0 Pass: Success to get gpio status
+GPIO_002_LPBK_TEST 0 Pass: Success to do loopback gpio test with SYS_EAST_GPIO pins 43 and 44

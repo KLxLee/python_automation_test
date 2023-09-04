@@ -1,0 +1,13 @@
+Set readip is ok.
+Command done.
+Version:Ver 20200808
+IP Addr:192:168:2:3
+NetMask:255:255:255:0
+Gateway:192:168:2:1
+Mac:0x0c:0x5c:0xb5:0x60:0x42:0x1f
+J6:on
+J11:on
+J9:on
+J8:on
+
+done

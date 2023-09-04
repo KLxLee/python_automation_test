@@ -1,0 +1,4 @@
+IP = TIMER
+TIMER_001_RISCV 0 Pass: RISCV timer of CPU run accurate within tolerance, 0.1 in period 5
+TIMER_002_STARFIVE_REG -14 Err: Timer failed at unit 2 with base address, 121d0000
+TIMER_003_STARFIVE -12 Err: StarFive timer too slow
