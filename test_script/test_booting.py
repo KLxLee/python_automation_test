@@ -7,8 +7,8 @@ import std_func as sf
 ########################################## Define ############################################
 zero_pattern = '0x00'
 negative_pattern = '0xff'
-checkerboard_pattern_1 = '0x55'
-checkerboard_pattern_2 = '0xaa'
+checkerboard_pattern_1 = 'aaaacccc'
+checkerboard_pattern_2 = '12345678'
 data_len = '0x1000'
 mem_addr1 = "0x50000000"
 mem_addr2 = "0x51000000"
