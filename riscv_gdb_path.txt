@@ -1,1 +1,1 @@
-C:\Users\MDC_FPGA_3\Documents\jjho\Freedom_SDK_2021_04\SiFive\riscv64-unknown-elf-toolchain-10.2.0-2020.12.8\bin\riscv64-unknown-elf-gdb.exe
+C:\FreedomStudio\Freedom_SDK_2021_04\SiFive\riscv64-unknown-elf-toolchain-10.2.0-2020.12.8\bin\riscv64-unknown-elf-gdb.exe
