@@ -7,6 +7,8 @@ import std_func as sf
 ########################################## Define ############################################
 Mem_addr_write = "0xa0000000"
 Mem_addr_read = "0x44000000"
+checkerboard_pattern_1 = 'aaaacccc'
+checkerboard_pattern_2 = '12345678'
 Flash_Basic_Addr = "0x0"
 Flash_Cross_Boundary_Addr = "0xfff000"
 Test_len = "0x2000"
@@ -22,7 +24,7 @@ Err_xspi_read_flash = -15
 Err_xspi_write_flash = -16
 Err_do_crc = -17
 Err_crc_result = -18
-Err_cmp_memory_result = -19
+Err_cmp_memory_byte_result = -19
 Err_spl_boot_source = -20
 
 ###################################### Global Variable #######################################
@@ -205,6 +207,14 @@ def xspi_write_flash(mem_addr, flash_addr, len):
   else:
     return 0
 
+def from_hex(hexdigits):
+    return int(hexdigits, 16)
+
+def write_memory(addr, data_pattern, len):
+  cmd_send = "mw.l " + addr + " " + data_pattern + " " + len
+  send_command(cmd_send)
+  time.sleep(1)
+
 def do_crc(mem_addr, len):
   global res_msg
   
@@ -220,7 +230,7 @@ def do_crc(mem_addr, len):
   x = re.search(resp_string, line)
   return x.group().strip("==> ")
 
-def cmp_memory(addr1, addr2, len):
+def cmp_memory_byte(addr1, addr2, len):
   len_dec = str(int(len, 16))
   cmd_send = "cmp.b " + addr1 + " " + addr2 + " " + len
   resp_string = "Total of " + len_dec + " byte"
@@ -231,6 +241,58 @@ def cmp_memory(addr1, addr2, len):
     return -1
   else: 
     return 0
+
+def ewr_test(bus, cs, flash_addr):
+  global Mem_addr_write
+  global Mem_addr_read
+  global checkerboard_pattern_1
+  global checkerboard_pattern_2
+  global Test_len
+  global res_msg
+
+  ret = detect_CMD_startup()
+  if ret < 0:
+    return ret
+
+  ret = xspi_probe(bus, cs)
+  if ret < 0:
+    return ret
+
+  ret = xspi_erase_flash(flash_addr, Test_len)
+  if ret < 0:
+    return ret
+  
+  ret = xspi_read_flash(Mem_addr_read, flash_addr, Test_len)
+  if ret < 0:
+    return ret
+  
+  crc_erased = do_crc(Mem_addr_read, Test_len)
+  if isinstance(crc_erased, (int)):
+    return crc_erased
+  if crc_erased != Result_CRC_Erased:
+    res_msg = "Err: CRC result for erased data at basic memory wrong"
+    return Err_crc_result
+
+  byte_len = from_hex(Test_len)
+  Test_len_long = hex(int(byte_len/4))
+  write_memory(Mem_addr_write, checkerboard_pattern_1, Test_len_long)
+  write_memory(Mem_addr_read, checkerboard_pattern_2, Test_len_long)
+
+  ret = xspi_write_flash(Mem_addr_write, Flash_Basic_Addr, Test_len)
+  if ret < 0:
+    return ret
+
+  ret = xspi_read_flash(Mem_addr_read, Flash_Basic_Addr, Test_len)
+  if ret < 0:
+    return ret
+
+  ret = cmp_memory_byte(Mem_addr_read, Mem_addr_write, Test_len)
+  if ret < 0:
+    res_msg = "Err: Memory read at " + Mem_addr_read + " is different with memory write at " + Mem_addr_write
+    return Err_cmp_memory_byte_result
+  
+  res_msg = "Pass: "
+  return 0
 
 def XSPI_001_PROTECT_BASIC_TEST(bus, cs):
   global Flash_Basic_Addr
@@ -263,81 +325,14 @@ def XSPI_001_PROTECT_BASIC_TEST(bus, cs):
   return 0
 
 def XSPI_002_ERASE_READ_WRITE(bus, cs):
-  global Mem_addr_write
-  global Mem_addr_read
   global Flash_Basic_Addr
-  global Test_len
-  global res_msg
 
-  ret = detect_CMD_startup()
-  if ret < 0:
-    return ret
-
-  ret = xspi_probe(bus, cs)
-  if ret < 0:
-    return ret
-
-  ret = xspi_erase_flash(Flash_Basic_Addr, Test_len)
-  if ret < 0:
-    return ret
-  
-  ret = xspi_read_flash(Mem_addr_read, Flash_Basic_Addr, Test_len)
-  if ret < 0:
-    return ret
-  
-  crc_erased = do_crc(Mem_addr_read, Test_len)
-  if isinstance(crc_erased, (int)):
-    return crc_erased
-  if crc_erased != Result_CRC_Erased:
-    res_msg = "Err: CRC result for erased data at basic memory wrong"
-    return Err_crc_result
-  
-  ret = xspi_write_flash(Mem_addr_write, Flash_Basic_Addr, Test_len)
-  if ret < 0:
-    return ret
-
-  ret = xspi_read_flash(Mem_addr_read, Flash_Basic_Addr, Test_len)
-  if ret < 0:
-    return ret
-
-  ret = cmp_memory(Mem_addr_read, Mem_addr_write, Test_len)
-  if ret < 0:
-    res_msg = "Err: Memory read at " + Mem_addr_read + " is different with memory write at " + Mem_addr_write
-    return Err_cmp_memory_result
-  
-  res_msg = "Pass: "
-  return 0
+  return ewr_test(bus, cs, Flash_Basic_Addr)
 
 def XSPI_003_CROSS_BOUNDARY(bus, cs):
-  global Mem_addr_write
-  global Mem_addr_read
   global Flash_Cross_Boundary_Addr
-  global Test_len
-  global res_msg
 
-  ret = detect_CMD_startup()
-  if ret < 0:
-    return ret
-
-  ret = xspi_probe(bus, cs)
-  if ret < 0:
-    return ret
-
-  ret = xspi_write_flash(Mem_addr_write, Flash_Cross_Boundary_Addr, Test_len)
-  if ret < 0:
-    return ret
-
-  ret = xspi_read_flash(Mem_addr_read, Flash_Cross_Boundary_Addr, Test_len)
-  if ret < 0:
-    return ret
-  
-  ret = cmp_memory(Mem_addr_read, Mem_addr_write, Test_len)
-  if ret < 0:
-    res_msg = "Err: Memory read at " + Mem_addr_read + " is different with memory write at " + Mem_addr_write
-    return Err_cmp_memory_result
-  
-  res_msg = "Pass: "
-  return 0
+  return ewr_test(bus, cs, Flash_Cross_Boundary_Addr)
 
 def XSPI_004_LOAD_UBOOT_IMG(bus, cs, img_addr, flash_off, file_size):
   global Mem_addr_read
@@ -365,10 +360,10 @@ def XSPI_004_LOAD_UBOOT_IMG(bus, cs, img_addr, flash_off, file_size):
   if ret < 0:
     return ret
 
-  ret = cmp_memory(Mem_addr_read, img_addr, file_size_hex)
+  ret = cmp_memory_byte(Mem_addr_read, img_addr, file_size_hex)
   if ret < 0:
     res_msg = "Err: Memory read at " + Mem_addr_read + " is different with memory write at " + img_addr
-    return Err_cmp_memory_result
+    return Err_cmp_memory_byte_result
 
   res_msg = "Pass: Success to load uboot image from RAM address "  + img_addr + " to XSPI flash with offset" + flash_off + ", size " + file_size + " bytes"
   return 0
