@@ -7,7 +7,7 @@ from os import path
 import std_func as sf
 
 ########################################## Define ############################################
-ipaddr = "192.168.152.144"
+ipaddr = "192.168.152.38"
 serverip = "192.168.152.55"
 gatewayip = "192.168.152.1"
 tftp_port = 69
@@ -190,11 +190,17 @@ def booting_linux():
   global res_msg
 
   resp_string = "Linux version"
-  time_wait = 10
+  time_wait = 60
   line = scan_expected_resp("", resp_string, time_wait)
   if line == None:
     res_msg = "Err: Failed to start Linux"
     return Err_linux_start
+  
+  resp_string = "Welcome to Buildroot|buildroot login:"
+  time_wait = 90
+  line = scan_expected_resp("", resp_string, time_wait)  
+  if line:
+    return 0
   
   resp_string = "Please press Enter to activate this console."
   time_wait = 90
