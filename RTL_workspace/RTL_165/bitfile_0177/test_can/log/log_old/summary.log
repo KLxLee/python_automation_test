@@ -1,0 +1,2 @@
+IP = CAN
+CAN_002_EXT_LPBK -14 Err: CAN received is empty, supposed to receive data from loopback

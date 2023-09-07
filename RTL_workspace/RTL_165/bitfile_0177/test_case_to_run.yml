@@ -10,3 +10,4 @@ test_case:
     - test_spi
     - test_timer
     - test_watchdog
+    - test_can

@@ -1,0 +1,199 @@
+IP = CAN
+COM12 Open success
+b'\r\n'
+b'U-Boot SPL 2023.01-00076-g16d4462a74-dirty (Sep 07 2023 - 12:03:55 +0800)\r\n'
+b'Trying to boot from RAM\r\n'
+b'\r\n'
+b'OpenSBI v1.0\r\n'
+b'   ____                    _____ ____ _____\r\n'
+b'  / __ \\                  / ____|  _ \\_   _|\r\n'
+b' | |  | |_ __   ___ _ __ | (___ | |_) || |\r\n'
+b" | |  | | '_ \\ / _ \\ '_ \\ \\___ \\|  _ < | |\r\n"
+b' | |__| | |_) |  __/ | | |____) | |_) || |_\r\n'
+b'  \\____/| .__/ \\___|_| |_|_____/|____/_____|\r\n'
+b'        | |\r\n'
+b'        |_|\r\n'
+b'\r\n'
+b'Platform Name             : StarFive JH8100 FPGA\r\n'
+b'Platform Features         : medeleg\r\n'
+b'Platform HART Count       : 6\r\n'
+b'Platform IPI Device       : aclint-mswi\r\n'
+b'Platform Timer Device     : aclint-mtimer @ 4000000Hz\r\n'
+b'Platform Console Device   : cadence_uart\r\n'
+b'Platform HSM Device       : ---\r\n'
+b'Platform Reboot Device    : ---\r\n'
+b'Platform Shutdown Device  : ---\r\n'
+b'Firmware Base             : 0x40000000\r\n'
+b'Firmware Size             : 292 KB\r\n'
+b'Runtime SBI Version       : 0.3\r\n'
+b'\r\n'
+b'Domain0 Name              : root\r\n'
+b'Domain0 Boot HART         : 2\r\n'
+b'Domain0 HARTs             : 0*,1*,2*,3*,4*,5*\r\n'
+b'Domain0 Region00          : 0x0000000002000000-0x000000000200ffff (I)\r\n'
+b'Domain0 Region01          : 0x0000000040000000-0x000000004007ffff ()\r\n'
+b'Domain0 Region02          : 0x0000000000000000-0xffffffffffffffff (R,W,X)\r\n'
+b'Domain0 Next Address      : 0x0000000040100000\r\n'
+b'Domain0 Next Arg1         : 0x0000000040198b90\r\n'
+b'Domain0 Next Mode         : S-mode\r\n'
+b'Domain0 SysReset          : yes\r\n'
+b'\r\n'
+b'Boot HART ID              : 2\r\n'
+b'Boot HART Domain          : root\r\n'
+b'Boot HART ISA             : rv64imafdcbsuh\r\n'
+b'Boot HART Features        : scounteren,mcounteren,mcountinhibit,sscofpmf,time\r\n'
+b'Boot HART PMP Count       : 16\r\n'
+b'Boot HART PMP Granularity : 4096\r\n'
+b'Boot HART PMP Address Bits: 38\r\n'
+b'Boot HART MHPM Count      : 12\r\n'
+b'Boot HART MIDELEG         : 0x0000000000003666\r\n'
+b'Boot HART MEDELEG         : 0x0000000000f0b509\r\n'
+b'\r\n'
+b'\r\n'
+b'U-Boot 2023.01-00076-g16d4462a74-dirty (Sep 07 2023 - 12:03:55 +0800)\r\n'
+b'\r\n'
+b'CPU:   rv64imafdch\r\n'
+b'Model: StarFive JH8100 FPGA\r\n'
+b'DRAM:  8 GiB\r\n'
+b'Core:  85 devices, 23 uclasses, devicetree: separate\r\n'
+b'MMC:   mmc@1f110000: 0, mmc@1f120000: 1\r\n'
+b'Loading Environment from nowhere... OK\r\n'
+b'In:    serial@12160000\r\n'
+b'Out:   serial@12160000\r\n'
+b'Err:   serial@12160000\r\n'
+b'Model: StarFive JH8100 FPGA\r\n'
+b'Net:   eth0: ethernet@1f100000\r\n'
+b'StarFive # '
+StarFive # found
+b'misc list\r\n'
+b'Device               Index     Driver\r\n'
+b'-------------------------------------\r\n'
+b'can@12200000             0   ipms_can\r\n'
+   0  found
+b'can@12210000             1   ipms_can\r\n'
+b'StarFive # md.l 122000a0 1\r\n'
+b'122000a0: 00900000                             ....\r\n'
+2000a0: .{8}  found
+b'md.l 122000a0 1\r\n'
+b'122000a0: 00900020                              ...\r\n'
+2000a0: .{8}  found
+b'md.l 50000000 1\r\n'
+b'50000000: 00000000                             ....\r\n'
+000000: .{8}  found
+b'md.l 60000000 1\r\n'
+b'60000000: 00000000                             ....\r\n'
+000000: .{8}  found
+b'md.l 0x50000004 1\r\n'
+b'50000004: 00000008                             ....\r\n'
+50000004: .{8}  found
+b'md.l 0x60000004 1\r\n'
+b'60000004: 00000000                             ....\r\n'
+60000004: .{8}  found
+b'md.l 0x50000008 1\r\n'
+b'50000008: 12345678                             xV4.\r\n'
+50000008: .{8}  found
+b'md.l 0x60000008 1\r\n'
+b'60000008: 00000000                             ....\r\n'
+60000008: .{8}  found
+b'md.l 0x5000000c 1\r\n'
+b'5000000c: 87654321                             !Ce.\r\n'
+5000000c: .{8}  found
+b'md.l 0x6000000c 1\r\n'
+b'6000000c: 00000000                             ....\r\n'
+6000000c: .{8}  found
+b' misc read can@12200000 0 60000000 0\r\n'
+b"Command 'read' failed: Error -2\r\n"
+Command 'read' failed: Error found
+RX buffer empty
+b' misc read can@12200000 0 60000000 0\r\n'
+b'StarFive # '
+b''
+Command 'read' failed: Error not found
+RX buffer not empty
+b'cmp.l 50000000 60000000 4\r\n'
+b'Total of 4 word(s) were the same\r\n'
+Total of 4 word found
+b'md.l 50000000 1\r\n'
+b'50000000: 000007ff                             ....\r\n'
+000000: .{8}  found
+b'md.l 60000000 1\r\n'
+b'60000000: 00000000                             ....\r\n'
+000000: .{8}  found
+b'md.l 0x50000004 1\r\n'
+b'50000004: 00000008                             ....\r\n'
+50000004: .{8}  found
+b'md.l 0x60000004 1\r\n'
+b'60000004: 00000000                             ....\r\n'
+60000004: .{8}  found
+b'md.l 0x50000008 1\r\n'
+b'50000008: abcdef01                             ....\r\n'
+50000008: .{8}  found
+b'md.l 0x60000008 1\r\n'
+b'60000008: 00000000                             ....\r\n'
+60000008: .{8}  found
+b'md.l 0x5000000c 1\r\n'
+b'5000000c: ffffffff                             ....\r\n'
+5000000c: .{8}  found
+b'md.l 0x6000000c 1\r\n'
+b'6000000c: 00000000                             ....\r\n'
+6000000c: .{8}  found
+b' misc read can@12200000 0 60000000 0\r\n'
+b"Command 'read' failed: Error -2\r\n"
+Command 'read' failed: Error found
+RX buffer empty
+b' misc read can@12200000 0 60000000 0\r\n'
+b'StarFive # '
+b''
+Command 'read' failed: Error not found
+RX buffer not empty
+b'cmp.l 50000000 60000000 4\r\n'
+b'Total of 4 word(s) were the same\r\n'
+Total of 4 word found
+CAN_001_INT_LPBK 0 Pass: 
+b' \r\n'
+b'StarFive # '
+StarFive # found
+b'misc list\r\n'
+b'Device               Index     Driver\r\n'
+b'-------------------------------------\r\n'
+b'can@12200000             0   ipms_can\r\n'
+   0  found
+b'md.l 122000a0 1\r\n'
+b'122000a0: 00900020                              ...\r\n'
+2000a0: .{8}  found
+b'md.l 122000a0 1\r\n'
+b'122000a0: 00904040                             @@..\r\n'
+2000a0: .{8}  found
+b'md.l 50000000 1\r\n'
+b'50000000: 00000000                             ....\r\n'
+000000: .{8}  found
+b'md.l 60000000 1\r\n'
+b'60000000: 00000000                             ....\r\n'
+000000: .{8}  found
+b'md.l 0x50000004 1\r\n'
+b'50000004: 00000008                             ....\r\n'
+50000004: .{8}  found
+b'md.l 0x60000004 1\r\n'
+b'60000004: 00000000                             ....\r\n'
+60000004: .{8}  found
+b'md.l 0x50000008 1\r\n'
+b'50000008: 12345678                             xV4.\r\n'
+50000008: .{8}  found
+b'md.l 0x60000008 1\r\n'
+b'60000008: 00000000                             ....\r\n'
+60000008: .{8}  found
+b'md.l 0x5000000c 1\r\n'
+b'5000000c: 87654321                             !Ce.\r\n'
+5000000c: .{8}  found
+b'md.l 0x6000000c 1\r\n'
+b'6000000c: 00000000                             ....\r\n'
+6000000c: .{8}  found
+b' misc read can@12200000 0 60000000 0\r\n'
+b"Command 'read' failed: Error -2\r\n"
+Command 'read' failed: Error found
+RX buffer empty
+b' misc read can@12200000 0 60000000 0\r\n'
+b"Command 'read' failed: Error -2\r\n"
+Command 'read' failed: Error found
+RX buffer empty
+CAN_002_EXT_LPBK -14 Err: CAN received is empty, supposed to receive data from loopback

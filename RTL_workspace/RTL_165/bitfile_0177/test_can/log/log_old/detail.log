@@ -1,0 +1,92 @@
+IP = CAN
+COM12 Open success
+b' \r\n'
+b'StarFive # '
+StarFive # found
+b'misc list\r\n'
+b'Device               Index     Driver\r\n'
+b'-------------------------------------\r\n'
+b'can@12200000             0   ipms_can\r\n'
+   0  found
+b'md.l 122000a0 1\r\n'
+b'122000a0: 00005042                             BP..\r\n'
+2000a0: .{8}  found
+b'md.l 122000a0 1\r\n'
+b'122000a0: 01004020                              @..\r\n'
+2000a0: .{8}  found
+b'md.l 50000000 1\r\n'
+b'50000000: 00000000                             ....\r\n'
+000000: .{8}  found
+b'md.l 60000000 1\r\n'
+b'60000000: 00000000                             ....\r\n'
+000000: .{8}  found
+b'md.l 0x50000004 1\r\n'
+b'50000004: 00000008                             ....\r\n'
+50000004: .{8}  found
+b'md.l 0x60000004 1\r\n'
+b'60000004: 00000000                             ....\r\n'
+60000004: .{8}  found
+b'md.l 0x50000008 1\r\n'
+b'50000008: 12345678                             xV4.\r\n'
+50000008: .{8}  found
+b'md.l 0x60000008 1\r\n'
+b'60000008: 00000000                             ....\r\n'
+60000008: .{8}  found
+b'md.l 0x5000000c 1\r\n'
+b'5000000c: 87654321                             !Ce.\r\n'
+5000000c: .{8}  found
+b'md.l 0x6000000c 1\r\n'
+b'6000000c: 00000000                             ....\r\n'
+6000000c: .{8}  found
+b' misc read can@12200000 0 60000000 0\r\n'
+b'StarFive # '
+b''
+Command 'read' failed: Error not found
+RX buffer not empty
+b' \r\n'
+b'StarFive # '
+StarFive # found
+b'misc list\r\n'
+b'Device               Index     Driver\r\n'
+b'-------------------------------------\r\n'
+b'can@12200000             0   ipms_can\r\n'
+   0  found
+b'md.l 122000a0 1\r\n'
+b'122000a0: 00004020                              @..\r\n'
+2000a0: .{8}  found
+b'md.l 122000a0 1\r\n'
+b'122000a0: 00004040                             @@..\r\n'
+2000a0: .{8}  found
+b'md.l 50000000 1\r\n'
+b'50000000: 00000000                             ....\r\n'
+000000: .{8}  found
+b'md.l 60000000 1\r\n'
+b'60000000: 00000000                             ....\r\n'
+000000: .{8}  found
+b'md.l 0x50000004 1\r\n'
+b'50000004: 00000008                             ....\r\n'
+50000004: .{8}  found
+b'md.l 0x60000004 1\r\n'
+b'60000004: 00000000                             ....\r\n'
+60000004: .{8}  found
+b'md.l 0x50000008 1\r\n'
+b'50000008: 12345678                             xV4.\r\n'
+50000008: .{8}  found
+b'md.l 0x60000008 1\r\n'
+b'60000008: 00000000                             ....\r\n'
+60000008: .{8}  found
+b'md.l 0x5000000c 1\r\n'
+b'5000000c: 87654321                             !Ce.\r\n'
+5000000c: .{8}  found
+b'md.l 0x6000000c 1\r\n'
+b'6000000c: 00000000                             ....\r\n'
+6000000c: .{8}  found
+b' misc read can@12200000 0 60000000 0\r\n'
+b"Command 'read' failed: Error -2\r\n"
+Command 'read' failed: Error found
+RX buffer empty
+b' misc read can@12200000 0 60000000 0\r\n'
+b"Command 'read' failed: Error -2\r\n"
+Command 'read' failed: Error found
+RX buffer empty
+CAN_002_EXT_LPBK -14 Err: CAN received is empty, supposed to receive data from loopback
