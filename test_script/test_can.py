@@ -165,9 +165,12 @@ def set_lpbk(reg_adr, mode):
 
   if mode == Int_lpbk: # internal
     reg_val_write = reg_val_read[0:6] + '2' + reg_val_read[7:8] # set LBMI
+    reg_val_write = reg_val_write[0:4] + '0' + reg_val_write[5:8] # unset LOM
+    reg_val_write = '0' + reg_val_write[1:8] # unset Self-ACK
   else: # external
     reg_val_write = reg_val_read[0:6] + '4' + reg_val_read[7:8] # set LBME
     reg_val_write = reg_val_write[0:4] + '4' + reg_val_write[5:8] # set LOM
+    reg_val_write = '9' + reg_val_write[1:8] # set Self-ACK
   write_register(reg_CFG_STAT, reg_val_write)
 
 def transmit_can_frame(name, addr):
