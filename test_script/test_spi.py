@@ -340,3 +340,14 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
+# SPI_001_LOOPBACK
+# 1. Set pinctrl of MISO and MOSI to the pins which are connected
+# 2. Send out some value and read back the value.
+# 3. Compare the values in and out and supposed the same
+
+# SPI_002_RWR
+# 1. Read the device ID
+# 2. Perform read to a register
+# 3. Perform write to the register
+# 4. Perform read back to the register and verify the result

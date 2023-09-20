@@ -921,3 +921,12 @@ if __name__ == "__main__":
 # EMMC_004_SPLBOOT
 # 1. Reload another SPL MMC boot image.
 # 2. Detect uboot success enter prompt.
+
+# EMMC_005_RW_RPMB_ALL_MODE
+# 1. Write Auth Key in to RAM address_key
+# 2. Read RPMB counter
+# 3. Write data into RAM address_1
+# 4. Write data from RAM address_1 to RPMB partition
+# 5. Read data to RAM address_2 from RPMB partition
+# 6. Compare both memory of read and write data and suppose to be same
+# 7. Read RPMB counter and suppose the write counter has increased number of block to write in RPMB
