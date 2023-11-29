@@ -1,1 +1,1 @@
-C:/jenkins/automation
+internal_module
