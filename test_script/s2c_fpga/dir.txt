@@ -1,0 +1,1 @@
+c:\jenkins\workspace\uboot_jh8100_auto\RTL_workspace\RTL_200_JH8100\bitfile_0188\test_otpc\build

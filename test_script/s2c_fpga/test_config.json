@@ -1,0 +1,45 @@
+{
+    "$schema": "http://json-schema.org/schema",
+    "type": "object",
+    "title": "Automation",
+    "additionalProperties": true,
+
+    "patternProperties": {
+        "^[A-Za-z0-9\\._%\\+-]+$":{
+            "type":"object",
+            "description": "TEST RUN",
+            "patternProperties": {
+                "^[fpga\\._%\\+-]+$":{
+                    "type":"object",
+                    "description": "FPGA VARIABLE ",
+                        "properties": {
+                            "power_1_8V":{"description": "Switch 8V of FPGA [ON / OFF]","$ref": "#/definitions/POWER"},
+                            "power_3_3V":{"description": "Switch 3V of FPGA [ON / OFF]","$ref": "#/definitions/POWER"},
+                            "power_5_0V":{"description": "Switch 0V of FPGA [ON / OFF]","$ref": "#/definitions/POWER"},
+
+                            "S2CCLK_1":{"description": "S2CCLK_1 {A1 CLK}","$ref": "#/definitions/CLK"},
+                            "S2CCLK_2":{"description": "S2CCLK_2 {A2 CLK}","$ref": "#/definitions/CLK"},
+                            "S2CCLK_3":{"description": "S2CCLK_3 {A3 CLK}","$ref": "#/definitions/CLK"},
+                            "S2CCLK_4":{"description": "S2CCLK_4 {B1 CLK}","$ref": "#/definitions/CLK"},
+                            "S2CCLK_5":{"description": "S2CCLK_5 {B2 CLK}","$ref": "#/definitions/CLK"},
+                            "S2CCLK_6":{"description": "S2CCLK_6 {B3 CLK}","$ref": "#/definitions/CLK"},
+                            "S2CCLK_7":{"description": "S2CCLK_7 {A4 CLK}","$ref": "#/definitions/CLK"},
+                            "S2CCLK_8":{"description": "S2CCLK_8 {B4 CLK}","$ref": "#/definitions/CLK"},
+
+                            "bitfile_fpga1":{"type":["string","null"],"description": "Bitfile location for fpga1"},
+                            "bitfile_fpga2":{"type":["string","null"],"description": "Bitfile location for fpga1"},
+
+                            "project":{"type":"string"},
+                            "cpu":{"type":"string"}
+                        },"required": ["power_1_8V","power_3_3V","power_5_0V","S2CCLK_1","S2CCLK_2","S2CCLK_3","S2CCLK_4","S2CCLK_5","S2CCLK_6","S2CCLK_7","S2CCLK_8","bitfile_fpga1","bitfile_fpga2"]
+                    },
+                "fw_regscan":{"type":"object",
+                                "description": "FIRMWARE TEAM REGSCAN VARIABLE",
+                                "properties": {"project":{"type":"string"},
+                                "cpu":{"type":"string"}}}
+                }
+            }
+        },
+    "definitions": {"POWER":{"enum": ["ON","OFF","On","Off",true,false]},
+                      "CLK":{"type": "number","minimum": 0.200,"maximum": 350.000}}
+}

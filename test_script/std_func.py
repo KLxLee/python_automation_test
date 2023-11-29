@@ -92,6 +92,9 @@ def program_FPGA(build_path):
     path = f2.readline().rstrip('\r\n')
     f2.close()
 
+    if path == "internal_module":
+        path = os.path.dirname(os.path.abspath(__file__)) + "/s2c_fpga"
+
     f = open(path+"/dir.txt", "w")
     f.write(build_path)
     f.close()
